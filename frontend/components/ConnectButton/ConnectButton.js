@@ -5,10 +5,12 @@ import Jazzicon from "@metamask/jazzicon";
 // import Identicon from "./Identicon";
 import styles from './ConnectButton.module.scss'
 import { useEffect, useRef } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStop } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function ConnectButton() {
-  const { activateBrowserWallet, account } = useEthers();
+  const { activateBrowserWallet, deactivate, account } = useEthers();
   const etherBalance = useEtherBalance(account);
 
   function handleConnectWallet() {
@@ -40,6 +42,9 @@ export default function ConnectButton() {
           <div ref={acctIconRef} className={styles.accountIconStyle}>
           </div>
       </div>
+      <Button>
+        <FontAwesomeIcon size='1x' icon={faStop} onClick={deactivate} />
+      </Button>
     </div>
   ) : (
     <Button onClick={handleConnectWallet}>Connect Wallet</Button>
