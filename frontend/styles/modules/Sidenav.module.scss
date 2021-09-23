@@ -1,7 +1,7 @@
 
 .nav {
 
-    border: 5px solid red;
+    // border: 5px solid red;
     height: 100vh;
     width: 275px;
 
@@ -21,19 +21,25 @@
         font-size: 1.3rem;
         padding: 12px;
         width: fit-content;
-        &:active {
-            font-weight: bold;
-        }
+        // &:active {
+        //     font-weight: bold;
+        // }
+
         .navLink {
             color: black;
             border-radius: 25px;
             &:hover {
                 background-color: rgb(230, 230, 230);
             }
+            .activeNavLink {
+                font-weight: bold;
+                color: red;
+            }
             .navIconContainer {
-                width: 30px;
-                border: 2px solid red;
+                width: 35px;
+                // border: 2px solid red;
                 display: inline-block;
+                text-align: center;
             }
         }
 

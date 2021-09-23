@@ -7,8 +7,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAddressBook, faAt, faGem, faHome, faUser, faUsers, faSearch, faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
 import styles from '../styles/modules/Sidenav.module.scss'
+import { useRouter } from 'next/dist/client/router';
 
 export default function Sidenav() {
+
+  const router = useRouter();
+
   return (
     <Nav defaultActiveKey="/home" className={`flex-column ${styles.nav}`}>
       
@@ -22,7 +26,7 @@ export default function Sidenav() {
       
       <Nav.Item as="li" className={styles.sidenavItem}>
         <Link href="/" passHref>
-          <Nav.Link href="#" className={styles.navLink}>
+          <Nav.Link href="#" className={router.pathname === '/' ? ` ${styles.navLink} ${styles.activeNavLink}` : `${styles.navLink}`}>
             <div className={styles.navIconContainer}>
               <FontAwesomeIcon icon={faHome} />
             </div>

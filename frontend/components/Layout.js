@@ -1,9 +1,11 @@
 import Head from "next/head";
 import Sidenav from "@/components/Sidenav"
+import Topnav from './LayoutPieces/Topnav'
 
 export const siteTitle = "web3social dev";
 
-export default function Layout({ children }) {
+const Layout = ({ children, title, content }) => {
+// function Layout({ children, title, content }) {
   return (
     <>
       <Head>
@@ -13,11 +15,13 @@ export default function Layout({ children }) {
           rel="stylesheet"
         ></link>
 
-        <link rel="icon" href="/favicon.ico" />
+        <title>{title}</title>
         <meta
           name="description"
-          content="idk some description here"
+          content={content}
         />
+
+        <link rel="icon" href="/favicon.ico" />
         
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
@@ -26,11 +30,21 @@ export default function Layout({ children }) {
         <meta charSet="UTF-8" />
       </Head>
 
+      <Topnav />
       <Sidenav />
 
-      {children}
+      <main>
+        {children}
+      </main>
 
       
     </>
   );
 }
+
+Layout.defaultProps = {
+  title: 'web3social',
+  description: 'mvp v0'
+}
+
+export default Layout;
