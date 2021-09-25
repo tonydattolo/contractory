@@ -6,7 +6,7 @@ import Jazzicon from "@metamask/jazzicon";
 import styles from './ConnectButton.module.scss'
 import { useEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStop } from '@fortawesome/free-solid-svg-icons'
+import { faStop, faBan } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function ConnectButton() {
@@ -42,8 +42,8 @@ export default function ConnectButton() {
           <div ref={acctIconRef} className={styles.accountIconStyle}>
           </div>
       </div>
-      <Button>
-        <FontAwesomeIcon size='1x' icon={faStop} onClick={deactivate} />
+      <Button variant="link" className={styles.disconnectButton}>
+        <FontAwesomeIcon className={styles.disconnectIcon} icon={faBan} onClick={deactivate} />
       </Button>
     </div>
   ) : (
