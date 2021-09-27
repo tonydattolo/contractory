@@ -1,11 +1,21 @@
 import Head from "next/head";
-import Sidenav from "@/components/Sidenav"
-import Topnav from './LayoutPieces/Topnav'
+import Sidenav from "@/components/Sidenav";
+import Topnav from "./LayoutPieces/Topnav";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 export const siteTitle = "web3social dev";
 
 const Layout = ({ children, title, content }) => {
-// function Layout({ children, title, content }) {
+  // function Layout({ children, title, content }) {
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (dispatch && dispatch !== null && dispatch !== undefined)
+      dispatch(request_refresh());
+  }, [dispatch]);
+
   return (
     <>
       <Head>
@@ -16,14 +26,11 @@ const Layout = ({ children, title, content }) => {
         ></link>
 
         <title>{title}</title>
-        <meta
-          name="description"
-          content={content}
-        />
+        <meta name="description" content={content} />
 
         <link rel="icon" href="/favicon.ico" />
-        
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -33,18 +40,14 @@ const Layout = ({ children, title, content }) => {
       <Topnav />
       <Sidenav />
 
-      <main>
-        {children}
-      </main>
-
-      
+      <main>{children}</main>
     </>
   );
-}
+};
 
 Layout.defaultProps = {
-  title: 'web3social',
-  description: 'mvp v0'
-}
+  title: "web3social",
+  description: "mvp v0",
+};
 
 export default Layout;

@@ -1,13 +1,23 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import '../styles/global.scss';
 import Layout from '@/components/Layout';
-import { Provider } from 'react-redux';
-import { useStore } from '../store';
+
+// stores usedapp wallet state?
 import { DAppProvider, ChainId } from '@usedapp/core';
+
+// old redux
+// import { useStore } from '../store';
+// RTK
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from 'slices';
 
 function MyApp({ Component, pageProps }) {
   
-  const store = useStore(pageProps.initialReduxState)
+  // old redux
+  // const store = useStore(pageProps.initialReduxState)
+  // new redux
+  const store = configureStore({ reducer: rootReducer })
 
   const config = {
     readOnlyChainId: ChainId.Mainnet,
