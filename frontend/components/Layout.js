@@ -9,12 +9,12 @@ export const siteTitle = "web3social dev";
 const Layout = ({ children, title, content }) => {
   // function Layout({ children, title, content }) {
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (dispatch && dispatch !== null && dispatch !== undefined)
-      dispatch(request_refresh());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   if (dispatch && dispatch !== null && dispatch !== undefined)
+  //     dispatch(request_refresh());
+  // }, [dispatch]);
 
   return (
     <>

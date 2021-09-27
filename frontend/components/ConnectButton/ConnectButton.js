@@ -1,5 +1,5 @@
 import { Button } from "react-bootstrap";
-import { useEthers, useEtherBalance } from "@usedapp/core";
+import { useEthers, useEtherBalance, useLookupAddress, shortenAddress } from "@usedapp/core";
 import { formatEther } from '@ethersproject/units'
 import Jazzicon from "@metamask/jazzicon";
 // import Identicon from "./Identicon";
@@ -12,6 +12,8 @@ import { faStop, faBan } from '@fortawesome/free-solid-svg-icons'
 export default function ConnectButton() {
   const { activateBrowserWallet, deactivate, account } = useEthers();
   const etherBalance = useEtherBalance(account);
+  const ens = useLookupAddress()
+  
 
   function handleConnectWallet() {
     activateBrowserWallet();
@@ -33,11 +35,10 @@ export default function ConnectButton() {
         {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
       </div>
       <div className={styles.accountInfo}>
-        {account &&
-          `${account.slice(0, 6)}...${account.slice(
-            account.length - 4,
-            account.length
-          )}`}
+
+        {account && ens ? `${ens}` : account &&
+          `${shortenAddress(account)}`}
+
           {/* <Identicon /> */}
           <div ref={acctIconRef} className={styles.accountIconStyle}>
           </div>
