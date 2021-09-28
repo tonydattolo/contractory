@@ -24,6 +24,13 @@ export default function ConnectButton() {
     console.log(`signed message with signature: ${signature}`)
     const signerAddress = utils.verifyMessage(message, signature)
     console.log(`signing address: ${signerAddress}`)
+    if (account === signerAddress) {
+      console.log('account equals signerAddress')
+    } else {
+      console.log(`account and signer not equal: \n
+                  account: ${account} \n
+                  signerAddress: ${signerAddress}`)
+    }
   }
 
 
