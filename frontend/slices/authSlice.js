@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createDraftSafeSelector, createSlice } from "@reduxjs/toolkit";
 
 export const initialState = {
   user: null,
@@ -34,7 +34,7 @@ const authSlice = createSlice({
 
     },
     loadUserSuccess: (state, { payload }) => {
-
+        state.user = payload.user
     },
     loadUserFail: (state) => {
       state.user = null
@@ -84,203 +84,173 @@ export const {
 } = authSlice.actions
 
 // selector used to access state from components instead of connect
-export const authSelector = (state) => state.user
+export const authSelector = (state) => state //check this?
+// export const authSelector = (state) => state.user //check this?
 
-// asycn thunk action
+// const selectSelf = (state) => state
+// const safeSelector = createDraftSafeSelector(
+//     selectSelf,
+//     (state) => state.value
+// )
 
-export const load_user = () => async dispatch => {
-  try {
-      const res = await fetch('/api/account/user', {
-          method: 'GET',
-          headers: {
-              'Accept': 'application/json'
-          }
-      });
-
-      const data = await res.json();
-
-      if (res.status === 200) {
-          dispatch({
-              type: LOAD_USER_SUCCESS,
-              payload: data
-          });
-      } else {
-          dispatch({
-              type: LOAD_USER_FAIL
-          });
-      }
-  } catch(err) {
-      dispatch({
-          type: LOAD_USER_FAIL
-      });
+// async thunk actions
+export function load_user() {
+  return async (dispatch) => {
+    try {
+        const response = await fetch('/api/account/user', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+  
+        const data = await response.json();
+  
+        if (response.status === 200) {
+            dispatch(loadUserSuccess(data))
+        } else {
+            dispatch(loadUserFail())
+        }
+    } catch(error) {
+        dispatch(loadUserFail())
+    }
   }
+    
 };
 
-export const check_auth_status = () => async dispatch => {
-  try {
-      const res = await fetch('/api/account/verify', {
-          method: 'GET',
-          headers: {
-              'Accept': 'application/json',
-          }
-      });
+export function checkAuthStatus() {
+    return async (dispatch) => {
+        try {
+            const response = await fetch('/api/account/verify', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+    
+            if (response.status === 200) {
+                dispatch(authenticatedSuccess())
+                dispatch(load_user())
+            } else {
+                dispatch(authenticatedFail())
+            }
+        } catch (error) {
+            dispatch(authenticatedFail())
+        }
 
-      if (res.status === 200) {
-          dispatch({
-              type: AUTHENTICATED_SUCCESS
-          });
-          dispatch(load_user());
-      } else {
-          dispatch({
-              type: AUTHENTICATED_FAIL
-          });
-      }
-  } catch(err) {
-      dispatch({
-          type: AUTHENTICATED_FAIL
-      });
-  }
-};
+    }
+}
 
-export const request_refresh = () => async dispatch => {
-  try {
-      const res = await fetch('/api/account/refresh', {
-          method: 'GET',
-          headers: {
-              'Accept': 'application/json',
-          }
-      });
+export function requestRefresh() {
+    return async (dispatch) => {
+        try {
+            const response = await fetch('/api/account/refresh', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
 
-      if (res.status === 200) {
-          dispatch({
-              type: REFRESH_SUCCESS
-          });
-          dispatch(check_auth_status());
-      } else {
-          dispatch({
-              type: REFRESH_FAIL
-          });
-      }
-  } catch(err) {
-      dispatch({
-          type: REFRESH_FAIL
-      });
-  }
-};
+            if (response.status === 200) {
+                dispatch(refreshSuccess())
+                dispatch(checkAuthStatus())
+            } else {
+                dispatch(refreshFail())
+            }
+        } catch (error) {
+            dispatch(refreshFail())
+        }
+    }
+}
 
-export const register = (
-  publicAddress,
-  password,
-  re_password
-) => async dispatch => {
-  const body = JSON.stringify({
-      publicAddress,
-      password,
-      re_password
-  });
+export function register(publicAddress, password, re_password) {
+    return async (dispatch) => {
 
-  dispatch({
-      type: SET_AUTH_LOADING
-  });
+        const body = JSON.stringify({
+            publicAddress,
+            password,
+            re_password
+        })
 
-  try {
-      const res = await fetch('/api/account/register', {
-          method: 'POST',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
-          body: body
-      });
+        dispatch(setAuthLoading())
 
-      if (res.status === 201) {
-          dispatch({
-              type: REGISTER_SUCCESS
-          });
-      } else {
-          dispatch({
-              type: REGISTER_FAIL
-          });
-      }
-  } catch(err) {
-      dispatch({
-          type: REGISTER_FAIL
-      });
-  }
+        try {
+            const response = await fetch('/api/account/register',{
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: body
+            })
 
-  dispatch({
-      type: REMOVE_AUTH_LOADING
-  });
-};
+            if (response.status === 201) {
+                dispatch(registerSuccess())
+            } else {
+                dispatch(registerFail())
+            }
+        } catch (error) {
+            dispatch(registerFail())
+        }
+        dispatch(removeAuthLoading())
 
-export const reset_register_success = () => dispatch => {
-  dispatch({
-      type: RESET_REGISTER_SUCCESS
-  });
-};
+    }
+}
 
-export const login = (username, password) => async dispatch => {
-  const body = JSON.stringify({
-      username,
-      password
-  });
+export function resetRegisterSuccess() {
+    return async (dispatch) => {
+        dispatch(resetRegisterSuccess())
+    }
+}
 
-  dispatch({
-      type: SET_AUTH_LOADING
-  });
+export function login(publicAddress, password) {
+    return async (dispatch) => {
+        const body = JSON.stringify({
+            publicAddress,
+            password
+        })
 
-  try {
-      const res = await fetch('/api/account/login', {
-          method: 'POST',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-          },
-          body: body
-      });
+        dispatch(setAuthLoading())
 
-      if (res.status === 200) {
-          dispatch({
-              type: LOGIN_SUCCESS
-          });
-          dispatch(load_user());
-      } else {
-          dispatch({
-              type: LOGIN_FAIL
-          });
-      }
-  } catch(err) {
-      dispatch({
-          type: LOGIN_FAIL
-      });
-  }
+        try {
+            const response = await fetch('/api/account/login', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            })
+            if (response.status === 200) {
+                dispatch(loginSuccess())
+                dispatch(load_user())
+            } else {
+                dispatch(loginFail())
+            }
+        } catch (error) {
+            dispatch(loginFail())
+        }
 
-  dispatch({
-      type: REMOVE_AUTH_LOADING
-  });
-};
+        dispatch(removeAuthLoading())
+    }
+}
 
-export const logout = () => async dispatch => {
-  try {
-      const res = await fetch('/api/account/logout', {
-          method: 'POST',
-          headers: {
-              'Accept': 'application/json',
-          }
-      });
-
-      if (res.status === 200) {
-          dispatch({
-              type: LOGOUT_SUCCESS
-          });
-      } else {
-          dispatch({
-              type: LOGOUT_FAIL
-          });
-      }
-  } catch(err) {
-      dispatch({
-          type: LOGOUT_FAIL
-      });
-  }
-};
+export function logout(params) {
+    return async (dispatch) => {
+        try {
+            const response = await fetch('/api/account/logout', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+            if (response.status === 200) {
+                dispatch(logoutSuccess())
+            } else {
+                dispatch(logoutFail())
+            }
+        } catch (error) {
+            dispatch(logoutFail())
+        }
+    }
+}

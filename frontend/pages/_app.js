@@ -12,6 +12,33 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'slices';
 
+// https://www.quintessential.gr/blog/development/how-to-integrate-redux-with-next-js-and-ssr
+// const createStore = (preloadedState) => {
+//   return configureStore({
+//     reducer: {
+//       nextRepo: nextSlice,
+//     },
+//     preloadedState,
+//   })
+// }
+
+// let store;
+// export const initialiseStore = (preloadedState) => {
+//   let _store = store ?? createStore(preloadedState);
+
+//   if (preloadedState && store) {
+//    _store = createStore({ ...store.getState(), ...preloadedState });
+//     store = undefined;
+//   }
+
+//   // For SSG and SSR always create a new store
+//   if (typeof window === 'undefined') return _store;
+//   // Create the store once in the client
+//   if (!store) store = _store;
+
+//   return _store;
+// };
+
 function MyApp({ Component, pageProps }) {
   
   // old redux
