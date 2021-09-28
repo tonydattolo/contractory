@@ -7,7 +7,7 @@ export const initialState = {
   register_success: false
 }
 
-const authSlice = createSlice({
+const auth = createSlice({
   name: 'auth',
   initialState,
   reducers: {
@@ -81,7 +81,7 @@ export const {
   setAuthLoading,
   removeAuthLoading
 
-} = authSlice.actions
+} = auth.actions
 
 // selector used to access state from components instead of connect
 export const authSelector = (state) => state //check this?
@@ -92,6 +92,8 @@ export const authSelector = (state) => state //check this?
 //     selectSelf,
 //     (state) => state.value
 // )
+
+export default auth.reducer
 
 // async thunk actions
 export function load_user() {
@@ -197,7 +199,7 @@ export function register(publicAddress, password, re_password) {
     }
 }
 
-export function resetRegisterSuccess() {
+export function resetRegister() {
     return async (dispatch) => {
         dispatch(resetRegisterSuccess())
     }

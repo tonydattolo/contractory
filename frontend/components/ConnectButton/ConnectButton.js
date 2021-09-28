@@ -8,12 +8,24 @@ import { useEffect, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStop, faBan } from '@fortawesome/free-solid-svg-icons'
 
+import { utils } from 'ethers'
 
 export default function ConnectButton() {
-  const { activateBrowserWallet, deactivate, account } = useEthers();
+  const { activateBrowserWallet, deactivate, account, library } = useEthers();
   const etherBalance = useEtherBalance(account);
   const ens = useLookupAddress()
   
+  const handleSignedMessage = async e => {
+    const message = "message to sign"
+    const signer = library.getSigner()
+    const userAddress = await signer.getAddress()
+    const signature = await signer.signMessage(message)
+    alert(`signature: ${signature}`)
+    console.log(`signed message with signature: ${signature}`)
+    const signerAddress = utils.verifyMessage(message, signature)
+    console.log(`signing address: ${signerAddress}`)
+  }
+
 
   function handleConnectWallet() {
     activateBrowserWallet();
@@ -28,26 +40,34 @@ export default function ConnectButton() {
     }
   }, [account])
 
-  return account ? (
-    // container for ethereum balance and account listing
-    <div className={styles.buttonContainer}>
-      <div className={styles.ethBalance}>
-        {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
-      </div>
-      <div className={styles.accountInfo}>
-
-        {account && ens ? `${ens}` : account &&
-          `${shortenAddress(account)}`}
-
-          {/* <Identicon /> */}
-          <div ref={acctIconRef} className={styles.accountIconStyle}>
+  return (
+    
+    
+    <div>
+      <Button onClick={handleSignedMessage}>Sign Test</Button>
+      { account ? (
+        // container for ethereum balance and account listing
+        <div className={styles.buttonContainer}>
+          <div className={styles.ethBalance}>
+            {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
           </div>
-      </div>
-      <Button variant="link" className={styles.disconnectButton}>
-        <FontAwesomeIcon className={styles.disconnectIcon} icon={faBan} onClick={deactivate} />
-      </Button>
-    </div>
-  ) : (
-    <Button onClick={handleConnectWallet}>Connect Wallet</Button>
-  );
+          <div className={styles.accountInfo}>
+
+            {account && ens ? `${ens}` : account &&
+              `${shortenAddress(account)}`}
+
+              {/* <Identicon /> */}
+              <div ref={acctIconRef} className={styles.accountIconStyle}>
+              </div>
+          </div>
+          <Button variant="link" className={styles.disconnectButton}>
+            <FontAwesomeIcon className={styles.disconnectIcon} icon={faBan} onClick={deactivate} />
+          </Button>
+        </div>
+      ) : (
+        <Button onClick={handleConnectWallet}>Connect Wallet</Button>
+      ) 
+    }
+  </div>
+  )
 }

@@ -10,7 +10,7 @@ import { DAppProvider, ChainId } from '@usedapp/core';
 // RTK
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import rootReducer from 'slices';
+import rootReducer from 'slices/index';
 
 // https://www.quintessential.gr/blog/development/how-to-integrate-redux-with-next-js-and-ssr
 // const createStore = (preloadedState) => {
@@ -46,12 +46,12 @@ function MyApp({ Component, pageProps }) {
   // new redux
   const store = configureStore({ reducer: rootReducer })
 
-  const config = {
-    readOnlyChainId: ChainId.Mainnet,
-    readOnlyUrls: {
-      [ChainId.Mainnet]: 'https://frosty-floral-river.quiknode.pro/2e46be02a8f4105fcf08054c5d2afb7818e2c084/'
-    }
-  }
+  // const config = {
+  //   readOnlyChainId: ChainId.Mainnet,
+  //   readOnlyUrls: {
+  //     [ChainId.Mainnet]: 'https://frosty-floral-river.quiknode.pro/2e46be02a8f4105fcf08054c5d2afb7818e2c084/'
+  //   }
+  // }
   // const config = {
   //   readOnlyChainId: ChainId.Ropsten,
   //   readOnlyUrls: {
@@ -61,8 +61,8 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <Provider store={store}>
-      <DAppProvider config={config}>
-      {/* <DAppProvider config={{}}> */}
+      {/* <DAppProvider config={config}> */}
+      <DAppProvider config={{}}>
         <Layout>
           <Component {...pageProps} />
         </Layout>

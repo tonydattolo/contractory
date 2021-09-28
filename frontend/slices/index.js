@@ -3,7 +3,7 @@ import { combineReducers } from 'redux'
 // import postsReducer from './posts'
 // import postReducer from './post'
 // import commentsReducer from './comments'
-import authReducer from './authSlice'
+import authReducer from './auth'
 
 const rootReducer = combineReducers({
   // key value is from name given in createSlice function for chosen reducer
