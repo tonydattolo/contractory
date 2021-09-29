@@ -4,6 +4,8 @@ export const initialState = {
   user: null,
   isAuthenticated: false,
   loading: false,
+  refresh: null, // NOTE: maybe need these?
+  access: null
 }
 
 const web3auth = createSlice({
@@ -19,6 +21,10 @@ const web3auth = createSlice({
     },
     getUserFail: (state) => {
 
+    },
+    signatureFailRemoveAccess: (state) => {
+      state.access = false,
+      state.refresh = false
     },
 
   }

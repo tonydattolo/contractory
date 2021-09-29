@@ -31,7 +31,8 @@ class Web3Authentication(authentication.BaseAuthentication):
                 address_field = 'publicAddress'
                 kwargs = {
                     f"{address_field}__iexact": address
-                }
+                } # NOTE: check the names of these
+
                 # try to get user with provided data
                 user = User.objects.filter(**kwargs).first()
                 # return user
