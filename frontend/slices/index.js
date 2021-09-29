@@ -4,13 +4,12 @@ import { combineReducers } from 'redux'
 // import postReducer from './post'
 // import commentsReducer from './comments'
 import authReducer from './auth'
+import web3auth from './web3auth'
 
 const rootReducer = combineReducers({
   // key value is from name given in createSlice function for chosen reducer
   auth: authReducer,
-    // posts: postsReducer,
-//   comments: commentsReducer,
-//   post: postReducer,
+  web3auth: web3authReducer
 })
 
 export default rootReducer
