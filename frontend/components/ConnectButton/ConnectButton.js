@@ -4,7 +4,7 @@ import { formatEther } from '@ethersproject/units'
 import Jazzicon from "@metamask/jazzicon";
 // import Identicon from "./Identicon";
 import styles from './ConnectButton.module.scss'
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStop, faBan } from '@fortawesome/free-solid-svg-icons'
 
@@ -15,7 +15,10 @@ export default function ConnectButton() {
   const etherBalance = useEtherBalance(account);
   const ens = useLookupAddress()
   
-  const handleSignedMessage = async e => {
+  const [isSigned, setIsSigned] = useState(false)
+
+  // const handleSignedMessage = async e => {
+  async function handleSignedMessage() {
     const message = "message to sign"
     const signer = library.getSigner()
     const userAddress = await signer.getAddress()
@@ -26,20 +29,31 @@ export default function ConnectButton() {
     console.log(`signing address: ${signerAddress}`)
     if (account === signerAddress) {
       console.log('account equals signerAddress')
+      setIsSigned(true)
     } else {
       console.log(`account and signer not equal: \n
                   account: ${account} \n
                   signerAddress: ${signerAddress}`)
     }
+
+    if (isSigned) {
+      console.log(`is signed: ${isSigned}`)
+    }
+    
   }
-
-
+  
+  useEffect(() => {
+    if (account !== null && library !== undefined) {
+      handleSignedMessage()
+    }
+  }, [account])
+  
   function handleConnectWallet() {
-    activateBrowserWallet();
+    activateBrowserWallet()
   }
 
+  
   const acctIconRef = useRef()
-
   useEffect(() => {
     if (account && acctIconRef.current) {
       acctIconRef.current.innerHTML = "";

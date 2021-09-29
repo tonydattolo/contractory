@@ -1,5 +1,4 @@
 import sha3
-import ethereum
 from eth_utils import is_hex_address
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -18,7 +17,7 @@ def hash_personal_message(msg):
     padded = "\x19Ethereum Signed Message:\n" + str(len(msg)) + msg
     return sha3.keccak_256(bytes(padded, 'utf8')).digest()
 
-
+# https://ethereum.stackexchange.com/questions/27735/verifying-personal-sign-signature-with-pyethereum
 def recover_to_addr(msg, sig):
     msghash = hash_personal_message(msg)
     vrs = sig_to_vrs(sig)
@@ -31,7 +30,3 @@ def validate_eth_address(value):
             _('%(value)s is not a valid Ethereum address'),
             params={'value': value},
         )
-
-def ensDomainValidator(domain):
-    if domain[-4:] != '.eth':
-        raise forms.ValidationError('invald ENS domain address')

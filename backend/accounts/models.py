@@ -1,5 +1,5 @@
 import uuid
-from backend.accounts.utils import validate_eth_address
+from .utils import ensDomainValidator, validate_eth_address
 from django.db import models
 from django.utils import crypto, timezone
 
@@ -9,11 +9,11 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.utils.translation import ugettext_lazy as _
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, publicAddress, password=None, **extra_fields):
+    def create_user(self, publicAddress, password=None, ens=None, **extra_fields):
         if not publicAddress:
             raise ValueError('Users must have an public ethereum address')
 
-        user = self.model(publicAddress=publicAddress, **extra_fields)
+        user = self.model(publicAddress=publicAddress, ens=ens, **extra_fields)
 
         user.set_password(password)
         user.save()
@@ -36,12 +36,13 @@ class UserAccountManager(BaseUserManager):
         return self.create_user(publicAddress, password, **extra_fields)
 
 class UserAccount(AbstractBaseUser, PermissionsMixin):
-    publicAddress = models.CharField(max_length=42, unique=True, validators=validate_eth_address)
-    nonce = models.UUIDField(default=uuid.uuid4().hex)
-    # nonce = models.CharField(default=crypto.get_random_string)
-    # email = models.EmailField(max_length=255, unique=True)
-    # first_name = models.CharField(max_length=255)
-    # last_name = models.CharField(max_length=255)
+    publicAddress = models.CharField(min_length=42,max_length=42, unique=True, validators=[validate_eth_address])
+    # NOTE: the nonce MUST change every time a user logs in.
+    #       this is to prevent replay attacks on signed messages
+    nonce = models.CharField(default=crypto.get_random_string)
+    # nonce = models.UUIDField(default=uuid.uuid4().hex)
+    ensDomain = models.CharField(max_length=200, unique=True, validators=[ensDomainValidator])
+    
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)

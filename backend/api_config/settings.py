@@ -94,6 +94,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication', # JWT auth for drf
+        'web3auth.authentication.Web3Authentication'
         
     ],
     # 'DEFAULT_FILTER_BACKENDS': [
