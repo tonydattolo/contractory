@@ -6,10 +6,10 @@ import Link from "next/dist/client/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAddressBook, faAt, faGem, faHome, faUser, faUsers, faSearch, faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
-import styles from '../styles/modules/Sidenav.module.scss'
+import styles from './SideNav.module.scss'
 import { useRouter } from 'next/dist/client/router';
 
-export default function Sidenav() {
+export default function SideNav() {
 
   const router = useRouter();
 

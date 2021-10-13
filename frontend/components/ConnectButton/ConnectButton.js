@@ -42,9 +42,18 @@ export default function ConnectButton() {
     
   }
   
+  // listener for account
   useEffect(() => {
+    // check if account is loaded successfully
     if (account !== null && library !== undefined) {
-      handleSignedMessage()
+      // grab nonce from backend for publicAddress
+
+      // handle signing message on frontend
+      // handleSignedMessage()
+
+      // post signed message to backend to authenticate
+
+      // handle returning 
     }
   }, [account])
   
@@ -65,7 +74,7 @@ export default function ConnectButton() {
     
     
     <div>
-      <Button onClick={handleSignedMessage}>Sign Test</Button>
+      <Button variant="outline-success" onClick={handleSignedMessage}>Sign Test</Button>
       { account ? (
         // container for ethereum balance and account listing
         <div className={styles.buttonContainer}>
@@ -86,7 +95,7 @@ export default function ConnectButton() {
           </Button>
         </div>
       ) : (
-        <Button onClick={handleConnectWallet}>Connect Wallet</Button>
+        <Button className="mx-3"variant="success" onClick={handleConnectWallet}>Connect Wallet</Button>
       ) 
     }
   </div>

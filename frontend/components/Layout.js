@@ -1,20 +1,14 @@
 import Head from "next/head";
-import Sidenav from "@/components/Sidenav";
-import Topnav from "./LayoutPieces/Topnav";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import TopNav from "./LayoutPieces/TopNav";
+import SideNav from "./LayoutPieces/SideNav";
+import RightNav from "./LayoutPieces/RightNav";
+// import { useEffect } from "react";
+// import { useDispatch } from "react-redux";
+import { Container, Row, Col } from "react-bootstrap";
 
 export const siteTitle = "web3social dev";
 
 const Layout = ({ children, title, content }) => {
-  // function Layout({ children, title, content }) {
-
-  // const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   if (dispatch && dispatch !== null && dispatch !== undefined)
-  //     dispatch(request_refresh());
-  // }, [dispatch]);
 
   return (
     <>
@@ -37,10 +31,21 @@ const Layout = ({ children, title, content }) => {
         <meta charSet="UTF-8" />
       </Head>
 
-      <Topnav />
-      <Sidenav />
+      <TopNav />
+      <Container>
+        <Row>
+          <Col md={3}>
+            <SideNav />
+          </Col>
+          <Col md={6}>
+            <main>{children}</main>
+          </Col>
+          <Col md={3}>
+            <RightNav />
+          </Col>
+        </Row>
+      </Container>
 
-      <main>{children}</main>
     </>
   );
 };
