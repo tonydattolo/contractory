@@ -7,10 +7,15 @@ import styles from './ConnectButton.module.scss'
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStop, faBan } from '@fortawesome/free-solid-svg-icons'
+import { setCurrentAddress } from "slices/authSlice"
+import { useDispatch } from "react-redux";
 
 import { utils } from 'ethers'
 
 export default function ConnectButton() {
+
+  const dispatch = useDispatch()
+
   const { activateBrowserWallet, deactivate, account, library } = useEthers();
   const etherBalance = useEtherBalance(account);
   const ens = useLookupAddress()
@@ -22,6 +27,7 @@ export default function ConnectButton() {
     const message = "message to sign"
     const signer = library.getSigner()
     const userAddress = await signer.getAddress()
+    console.log(`userAddress: ${userAddress}`)
     const signature = await signer.signMessage(message)
     alert(`signature: ${signature}`)
     console.log(`signed message with signature: ${signature}`)
@@ -32,10 +38,10 @@ export default function ConnectButton() {
       setIsSigned(true)
     } else {
       console.log(`account and signer not equal: \n
-                  account: ${account} \n
-                  signerAddress: ${signerAddress}`)
+      account: ${account} \n
+      signerAddress: ${signerAddress}`)
     }
-
+    
     if (isSigned) {
       console.log(`is signed: ${isSigned}`)
     }
@@ -46,6 +52,11 @@ export default function ConnectButton() {
   useEffect(() => {
     // check if account is loaded successfully
     if (account !== null && library !== undefined) {
+      // set address in redux state
+      // const { userAddress } = await library.getSigner().getAddress().then(result => result.data)
+      console.log(`userAddress: ${account}`)
+      dispatch(setCurrentAddress( account ))
+
       // grab nonce from backend for publicAddress
 
       // handle signing message on frontend
@@ -56,6 +67,14 @@ export default function ConnectButton() {
       // handle returning 
     }
   }, [account])
+
+  // listener for ENS name
+  useEffect(() => {
+    console.log(`ens: ${ens}`)
+    if (ens !== undefined && ens !== null) {
+      
+    }
+  }, [ens])
   
   function handleConnectWallet() {
     activateBrowserWallet()

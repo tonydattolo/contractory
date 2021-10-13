@@ -15,7 +15,7 @@ class UserAccountManager(BaseUserManager):
 
         user = self.model(publicAddress=publicAddress, ens=ens, **extra_fields)
 
-        user.set_password(password)
+        user.set_unusable_password()
         user.save()
 
         return user
@@ -36,12 +36,12 @@ class UserAccountManager(BaseUserManager):
         return self.create_user(publicAddress, password, **extra_fields)
 
 class UserAccount(AbstractBaseUser, PermissionsMixin):
-    publicAddress = models.CharField(min_length=42,max_length=42, unique=True, validators=[validate_eth_address])
+    publicAddress = models.CharField(max_length=42, unique=True, validators=[validate_eth_address])
     # NOTE: the nonce MUST change every time a user logs in.
     #       this is to prevent replay attacks on signed messages
-    nonce = models.CharField(default=crypto.get_random_string)
+    nonce = models.CharField(max_length=50, default=crypto.get_random_string(length=50))
     # nonce = models.UUIDField(default=uuid.uuid4().hex)
-    ensDomain = models.CharField(max_length=200, unique=True, validators=[ensDomainValidator])
+    ens = models.CharField(max_length=200, unique=True, validators=[ensDomainValidator])
     
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

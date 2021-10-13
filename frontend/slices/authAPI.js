@@ -22,16 +22,18 @@ export const authApi = createApi({
     }
   }),
   endpoints: (builder) => ({
-    userCreate: builder.mutation({
+    signup: builder.mutation({
       query(data) {
-        const { publicAddress, password, re_password } = data
+        const { publicAddress } = data
         return {
-          url: 'users/',
+          url: '/api/accounts/signup', // sends request 
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
           method: 'POST',
           body: {
-            email: `${email}`,
-            password: `${password}`,
-            re_password: `${re_password}`
+            publicAddress: `${publicAddress}`
           }
         }
       }
@@ -63,5 +65,6 @@ export const authApi = createApi({
 export const { 
   // useUserCreateMutation, # examples
   // useGoogleLoginQuery, # examples
+  useSignupMutation,
 
 } = authApi

@@ -72,7 +72,7 @@ class LoadUserView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-class LoadNonce(APIView):
-    def get(self, request):
-        try:
+# class LoadNonce(APIView):
+#     def get(self, request):
+#         try:
             

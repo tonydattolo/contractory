@@ -6,7 +6,9 @@ const slice = createSlice({
     user: null,
     isAuthenticated: false,
     access: null,
-    refresh: null
+    refresh: null,
+    currentAddress: null,
+    ENSname: null
   },
   reducers: {
     setToken: (state, {payload: { access, refresh }}) => {
@@ -26,6 +28,12 @@ const slice = createSlice({
       state.isAuthenticated = false
       state.access = null
       state.refresh = null
+    },
+    setCurrentAddress: (state, { payload }) => {
+      state.currentAddress = payload
+    },
+    setENSname: (state, { payload }) => {
+      state.ENSname = payload
     }
   },
   extraReducers: (builder) => {
@@ -52,7 +60,8 @@ export const {
   setCredentials,
   setToken,
   setUser,
-  setAuthenticated
+  setAuthenticated,
+  setCurrentAddress
 } = slice.actions
 export default slice.reducer
 export const selectCurrentUser = (state) => state.auth.user
