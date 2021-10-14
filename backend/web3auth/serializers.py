@@ -25,5 +25,5 @@ class LoginSerializer(serializers.BaseSerializer):
         addr = self.validated_data['address']
         # if not is_hex_address(addr):
         if not check_checksum(addr):
-            raise serializers.ValidationError(f'{addr} is not valid eth address')
+            raise serializers.ValidationError(f'{addr} failed the checksum')
         return addr
