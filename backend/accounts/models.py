@@ -8,6 +8,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 
+
+
 class UserAccountManager(BaseUserManager):
     def create_user(self, publicAddress, password=None, ens=None, **extra_fields):
         if not publicAddress:
@@ -15,7 +17,8 @@ class UserAccountManager(BaseUserManager):
 
         user = self.model(publicAddress=publicAddress, ens=ens, **extra_fields)
 
-        user.set_unusable_password()
+        # user.set_unusable_password()
+        user.set_password(password)
         user.save()
 
         return user

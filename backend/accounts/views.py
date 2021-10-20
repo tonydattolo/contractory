@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.contrib.auth import get_user_model
 # from django.contrib.auth.models import User 
-from .serializers import UserSerializer
+from .serializers import NonceSerializer, UserSerializer
 from .utils import validate_eth_address
 
 User = get_user_model()
@@ -72,7 +72,25 @@ class LoadUserView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-# class LoadNonce(APIView):
-#     def get(self, request):
-#         try:
+class GetNonceView(APIView):
+    def get(self, request):
+        try:
+            userid = request.data['publicAddress']
+            try:
+                nonce = NonceSerializer(userid)
+            except User.DoesNotExist:
+                try:
+                    
+                except:
+                return Response({'error': 'address not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'nonce': nonce.data},
+                status=status.HTTP_200_OK
+            )
+        except:
+            return Response(
+                {'error': 'not able to get nonce'},
+                status=
+            )
+
             
