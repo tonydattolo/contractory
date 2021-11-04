@@ -5,63 +5,117 @@ from rest_framework import permissions, status
 from django.contrib.auth import get_user_model
 # from django.contrib.auth.models import User 
 from .serializers import UserSerializer
-from .utils import validate_eth_address
+from .utils import validate_eth_address, recover_to_addr, sig_to_vrs, hash_personal_message
+from django.contrib.auth import login, authenticate
+from web3auth.authentication import Web3Authentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 User = get_user_model()
 
-class RegisterView(APIView):
-    permission_classes = (permissions.AllowAny, )
+class LoginOrCreateUserView(APIView):
+    permission_classes = [permissions.AllowAny, ]
+    authentication_classes = [JWTAuthentication, ]
 
-    def post(self, request):
+    def get(self, request, address, *args, **kwargs):
         try:
-            data = request.data
+            # data = request.data
 
-            publicAddress = data['username']
-            # password = data['password']
-            # re_password = data['re_password']
+            # publicAddress = data['publicAddress']
+            publicAddress = address
+            try:
+                user = User.objects.get(publicAddress__iexact=publicAddress)
+                return Response(
+                    {'nonce': user.nonce},
+                    status=status.HTTP_200_OK
+                )
+            except User.DoesNotExist:
+                try:
+                    user = User.objects.create_user(
+                        publicAddress=publicAddress
+                    )
+                    user.save()
+                    return Response(
+                        {'nonce': user.nonce},
+                        status=status.HTTP_201_CREATED
+                    )
+                except Exception as e:
+                    print(f'{e=}')
+                    return Response(
+                        {'error': 'Issue creating user account'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+        except Exception as e:
+            print(f'{e=}')
+            return Response(
+                {'error': 'Something went wrong when trying to login or create user'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-            # check if given address is a valid ethereum address
-            if not (validate_eth_address(publicAddress)):
+class LoadUserView(APIView):
+    authentication_classes = [Web3Authentication, ]
+    permission_classes = [permissions.AllowAny, ]
+
+    def perform_authentication(self, request):
+        return super().perform_authentication(request)
+
+    def get(self, request, address, nonce, signature, format=None):
+        # print(f'{request.user=}')
+        # print(f'{request.data=}')
+        # print(f'{request.user.publicAddress=}')
+        print(f'{address=}')
+        print(f'{nonce=}')
+        print(f'{signature=}')
+        try:
+            # userAddress = request.user
+            # signedMessage = request.data['signedMessage']
+            # nonce = request.data['nonce']
+
+            userAddress = address
+            signedMessage = signature
+            nonce = nonce
+
+
+            if not validate_eth_address(userAddress):
                 return Response(
                     {'error': 'Invalid ethereum address'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
-            # check if an account has already been created with that address 
-            if User.obects.filter(publicAddress__iexact=publicAddress).exists():
+            if not userAddress == recover_to_addr(nonce, signedMessage):
                 return Response(
-                    {'error': 'Account already exists with that address'},
+                    {'error': 'Invalid signature'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
             try:
-                user = User.objects.create_user(
-                    publicAddress=publicAddress,
-                    password=User.set_unusable_password()
+                user = authenticate(
+                    request=request, 
+                    token=nonce,
+                    publicAddress=userAddress,
+                    signedMessage=signedMessage
                 )
-                user.save()
+                if user:
+                    try:
+                        login(request, user, 'web3auth.backend.Web3Backend')
+                        return Response(
+                            {'user': user.data},
+                            status=status.HTTP_200_OK
+                        )
+                    except Exception as e:
+                        print(f'{e=}')
+                        return Response(
+                            {'error': 'Issue logging in user'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )                           
+            except Exception as e:
+                print(f'{e=}')
                 return Response(
-                    {'success': f'account for {publicAddress} created'},
-                    status=status.HTTP_201_CREATED
-                )
-            except:
-                return Response(
-                    {'error': 'Issue creating user account'},
+                    {'error': 'Issue authenticating user'},
                     status=status.HTTP_400_BAD_REQUEST
-                )    
+                )
 
-        except:
-            return Response(
-                {'error': 'Something went wrong when trying to register account'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-class LoadUserView(APIView):
-    def get(self, request, format=None):
-        try:
-            user = request.user
-            user = UserSerializer(user)
-
+            user = UserSerializer(userAddress)
             return Response(
                 {'user': user.data},
                 status=status.HTTP_200_OK
@@ -72,7 +126,12 @@ class LoadUserView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-# class LoadNonce(APIView):
-#     def get(self, request):
-#         try:
-            
+    # def get_authenticators(self):
+    #     return super().get_authenticators()
+
+    # def get_authenticate_header(self, request):
+    #     return super().get_authenticate_header(request)
+    
+    # def perform_authentication(self, request):
+    #     return super().perform_authentication(request)
+

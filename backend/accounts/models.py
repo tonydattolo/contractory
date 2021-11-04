@@ -41,7 +41,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     #       this is to prevent replay attacks on signed messages
     nonce = models.CharField(max_length=50, default=crypto.get_random_string(length=50))
     # nonce = models.UUIDField(default=uuid.uuid4().hex)
-    ens = models.CharField(max_length=200, unique=True, validators=[ensDomainValidator])
+    ens = models.CharField(max_length=200, unique=True, validators=[ensDomainValidator], blank=True, null=True)
     
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

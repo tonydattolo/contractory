@@ -11,6 +11,7 @@ django-cors-headers = "*"
 ethereum = "*"
 eth-utils = "*"
 django = "==3.2.7"
+drf-yasg = "*"
 
 [dev-packages]
 
