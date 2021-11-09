@@ -6,6 +6,7 @@ import Link from "next/dist/client/link";
 import styles from "./TopNav.module.scss"
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
+import DarkModeButton from "../DarkModeButton/DarkModeButton";
 
 export default function TopNav() {
   
@@ -21,18 +22,21 @@ export default function TopNav() {
   }
   
   return (
-    <Navbar bg="primary" variant="light">
+    <Navbar bg="light" variant="light" className={styles.navBar}>
       <Container>
         <Navbar.Brand>
           <Link href="/">
             <a className={styles.brandNameLinkStyling}>
-              Koobec@f
+              SCaaS MVP v0
             </a>
           </Link>
         </Navbar.Brand>
         <Navbar.Text>
-          <small></small>
+          <small>tagline</small>
         </Navbar.Text>
+        
+        <DarkModeButton />
+
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
           <>

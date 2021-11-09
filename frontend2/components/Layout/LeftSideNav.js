@@ -100,7 +100,8 @@ export default function LeftSideNav() {
             <div className={styles.navIconContainer}>
               <FontAwesomeIcon icon={faUser} />
             </div>
-            <span className={styles.linkText}>Login to View</span>
+            Login to View
+            {/* <span className={styles.linkText}>Login to View</span> */}
           </Nav.Link>
         </Link>
       </Nav.Item>
@@ -117,7 +118,8 @@ export default function LeftSideNav() {
             <div className={styles.navIconContainer}>
               <FontAwesomeIcon icon={faAddressBook} />
             </div>
-            <span className={styles.linkText}>example</span>
+            Example
+            {/* <span className={styles.linkText}>example</span> */}
           </Nav.Link>
         </Link>
       </Nav.Item>

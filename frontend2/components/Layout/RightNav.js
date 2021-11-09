@@ -16,22 +16,23 @@ export default function RightNav() {
   const currentPublicAddress = useSelector(state => state.auth.currentAddress)
   const associatedENSname = useSelector(state => state.auth.ensName)
 
-  const [
-    getNonce,
-    { 
-      data: nonceData, 
-      loading: nonceLoading, 
-      error: nonceError,
-      isError: nonceIsError,
-      isLoading: nonceIsLoading,
-      isSuccess: nonceIsSuccess
-    }
-   ] = useLazyGetNonceQuery()
+  // const [
+  //   getNonce,
+  //   { 
+  //     data: nonceData, 
+  //     loading: nonceLoading, 
+  //     error: nonceError,
+  //     isError: nonceIsError,
+  //     isLoading: nonceIsLoading,
+  //     isSuccess: nonceIsSuccess
+  //   }
+  //  ] = useLazyGetNonceQuery()
 
   const handleLogin = async () => {
     // get nonce associated with currentAddress from backend
     try {
-      await getNonce(currentPublicAddress)
+      // await getNonce(currentPublicAddress)
+
       // console.log(`nonceData: ${nonceData}`)
     } catch (error) {
       console.log(nonceErrorMessage)
@@ -42,12 +43,12 @@ export default function RightNav() {
     // authenticate on backend, return user
 
   }
-  useEffect(() => {
-    if (nonceIsSuccess && nonceData !== null && nonceData !== undefined) {
-      console.log(`nonceData.nonce: ${nonceData.nonce}`)
-      dispatch(setNonce(nonceData.nonce))
-    }
-  }, [nonceIsSuccess])
+  // useEffect(() => {
+  //   if (nonceIsSuccess && nonceData !== null && nonceData !== undefined) {
+  //     console.log(`nonceData.nonce: ${nonceData.nonce}`)
+  //     dispatch(setNonce(nonceData.nonce))
+  //   }
+  // }, [nonceIsSuccess])
 
   const handleLogout = async () => {
     // logout on backend

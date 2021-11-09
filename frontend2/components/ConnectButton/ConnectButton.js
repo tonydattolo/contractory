@@ -7,7 +7,7 @@ import styles from './ConnectButton.module.scss'
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStop, faBan } from '@fortawesome/free-solid-svg-icons'
-import { setCurrentAddress, setENSname, setUser } from "slices/authSlice"
+import { setCurrentAddress, setENSname, setUser } from "slices/walletsSlice"
 import { useDispatch, useSelector } from "react-redux";
 import { useLazyGetUserQuery } from "slices/authAPI";
 
@@ -25,13 +25,13 @@ export default function ConnectButton() {
   const [isSigned, setIsSigned] = useState(false)
   const [signature, setSignature] = useState("")
 
-  const [
-    getUser, {
-      data: userData,
-      loading: userLoading,
-      error: userError
-    }
-  ] = useLazyGetUserQuery()
+  // const [
+  //   getUser, {
+  //     data: userData,
+  //     loading: userLoading,
+  //     error: userError
+  //   }
+  // ] = useLazyGetUserQuery()
 
   // const handleSignedMessage = async e => {
   async function handleSignedMessage() {
@@ -77,15 +77,15 @@ export default function ConnectButton() {
   }, [isSigned])
 
   // listener for user data returned from server
-  useEffect(() => {
-    if (userData) {
-      console.log(`userData: ${userData}`)
-      console.log(`userData.publicAddress: ${userData.publicAddress}`)
+  // useEffect(() => {
+  //   if (userData) {
+  //     console.log(`userData: ${userData}`)
+  //     console.log(`userData.publicAddress: ${userData.publicAddress}`)
 
-      dispatch(setUser(userData))
-      // dispatch(setENSname(userData.name))
-    }
-  }, [userData])
+  //     dispatch(setUser(userData))
+  //     // dispatch(setENSname(userData.name))
+  //   }
+  // }, [userData])
 
   // listener for account
   useEffect(() => {

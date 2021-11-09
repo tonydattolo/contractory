@@ -4,5 +4,31 @@
 @import "colors";
 @import "mixins";
 
+$light-color: black;
+$light-background: white;
+$dark-color: white;
+$dark-background: rgb(58, 58, 58);
 
 
+body {
+    color: $light-color;
+    background-color: $light-background;
+    & li {
+        color: $light-color !important;
+        & a {
+            color: $light-color !important;
+
+        }
+    }
+}
+
+body.dark-mode {
+    color: $dark-color;
+    background-color: $dark-background;
+    & li {
+        color: $dark-color !important;
+        & a {
+            color: $dark-color !important;
+        }
+    }
+}
