@@ -35,11 +35,14 @@ const Layout = ({ children, title, content }) => {
       <TopNav />
       <Container>
         <Row>
-          <Col md={4}>
+          <Col md={3}>
             <LeftSideNav />
           </Col>
-          <Col md={8}>
+          <Col md={6}>
             <main>{children}</main>
+          </Col>
+          <Col md={3}>
+            <RightNav />
           </Col>
         </Row>
       </Container>
