@@ -21,11 +21,11 @@ from drf_yasg import openapi # new
 
 schema_view = get_schema_view(  # new
     openapi.Info(
-        title="koobecaf api",
-        default_version="v1",
-        description="koobecaf team13 api",
+        title="SCaaS API",
+        default_version="v0",
+        description="SCaaS mvp api layer",
         terms_of_service="TBD",
-        contact=openapi.Contact(email="team 13"),
+        contact=openapi.Contact(email="fill"),
         license=openapi.License(name="BSD License"),
     ),
     public=True,
@@ -44,8 +44,10 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     # Profile
     path('profile/', include('profiles.urls')),
-    # Posts
-    path('posts/', include('posts.urls')),
+    # Wallets
+    path('wallets/', include('wallets.urls')),
+    # Contracts
+    # path('contracts/', include('contracts.urls')),
 ]
 
 # urlpatterns += [re_path(r'^.*', TemplateView.as_view(template_name='index.html'))]

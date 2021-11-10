@@ -5,16 +5,18 @@ import { useGetProfileByEmailQuery } from "slices/profileAPI";
 import { Button, Spinner, Card, ListGroup, ListGroupItem } from "react-bootstrap";
 import { setProfileInfo } from "slices/profileSlice";
 import { setPosts } from "slices/postsSlice";
-import { useGetPostsByUserQuery } from "slices/postsAPI";
-import Post from "@/components/Post";
+// import { useGetPostsByUserQuery } from "slices/postsAPI";
+import { useGetWalletsByUserQuery } from "slices/walletsAPI";
+import Wallet from "@/components/Wallet";
 
-export default function Profile() {
+export default function Dashboard() {
 
   const dispatch = useDispatch()
   const router = useRouter()
   const { email } = router.query
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
+  const access_token = useSelector(state => state.auth.access)
   const [sameUser, setSameUser] = useState(false)
 
   useEffect(() => {
@@ -40,12 +42,12 @@ export default function Profile() {
   } = useGetProfileByEmailQuery(`${email}`)
   
   const {
-    data: postsData,
-    error: postsError,
-    isLoading: postsIsLoading,
-    isError: postsIsError,
-    isFetching: postsIsFetching
-  } = useGetPostsByUserQuery(`${email}`)
+    data: walletsData,
+    error: walletsError,
+    isLoading: walletsIsLoading,
+    isError: walletsIsError,
+    isFetching: walletsIsFetching
+  } = useGetWalletsByUserQuery({ email, access_token })
 
   useEffect(() => {
     if (isError === true) {
@@ -53,10 +55,10 @@ export default function Profile() {
     }
   }, [isError])
   useEffect(() => {
-    if (postsIsError === true) {
-      console.log(postsError)
+    if (walletsIsError === true) {
+      console.log(walletsError)
     }
-  }, [postsIsError])
+  }, [walletsIsError])
 
   const handleEditButton = () => {
     router.replace(`edit/${email}`, undefined, { shallow: true })
@@ -65,7 +67,7 @@ export default function Profile() {
   return (
     <>
       <div>
-        <h3>Profile Page</h3>
+        <h3>Account Dashboard</h3>
       </div>
       <br />
 
@@ -113,14 +115,17 @@ export default function Profile() {
       <br />
 
       <>
-      {postsIsLoading || postsIsFetching || postsData === undefined ?
+      {walletsIsLoading || walletsIsFetching || walletsData === undefined ?
         (
           <Spinner animation="border" variant="success" />
         ) : (
           <>
-            <h3>Posts from {email}</h3>
-            {postsData.posts.map(post => (
+            <h3>Wallets connected to {email}</h3>
+            {/* {postsData.posts.map(post => (
               <Post key={post.id} post={post} isOwner={sameUser}/>
+            ))} */}
+            {walletsData.wallets.map(wallet => (
+              <Wallet key={wallet.id} wallet={wallet}/>
             ))}
           </>
         )

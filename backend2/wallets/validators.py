@@ -6,19 +6,20 @@ from ethereum.utils import ecrecover_to_pub
 def ethereumAddressValidator(address):
     if not is_hex_address(address):
         raise ValidationError("Invalid Ethereum address")
+    return True
 
 def ensDomainValidator(domain):
     if domain[-4:] != ".eth":
         raise ValidationError("Invalid ENS domain")
-
     if len(domain) > 63:
         raise ValidationError("ENS domain too long")
+    return True
 
 # https://medium.com/@angellopozo/ethereum-signing-and-validating-13a2d7cb0ee3
 
 def signatureToVRS(signature):
-    r = int(signature[2:64], 16)
-    s = int(signature[64:], 16)
+    r = int(signature[2:66], 16)
+    s = int(signature[66:130], 16)
     v = int(signature[130:], 16)
     # v = int(signature[-1:])
     return v, r, s

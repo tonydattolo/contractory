@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (
     AddWalletView,
     GetNonceView,
-    ConfirmSignatureView
+    ConfirmSignatureView,
+    GetWalletsByUserView
     # WalletListView,
     # WalletDetailView,
     # WalletCreateView,
@@ -15,10 +16,12 @@ from .views import (
     # WalletTransactionDeleteView,
 )
 
-url_patterns = [
-    path('add/', AddWalletView.as_view(), name='add_wallet'),
-    path('get_nonce/', GetNonceView.as_view(), name='get_nonce'),
-    path('confirm_signature/', ConfirmSignatureView.as_view(), name='confirm_signature'),
+
+urlpatterns = [
+    path('add/<str:address>/', AddWalletView.as_view(), name='add_wallet'),
+    path('get_nonce/<str:address>/', GetNonceView.as_view(), name='get_nonce'),
+    path('confirm_signature/<str:address>/<str:nonce>/<str:signature>/', ConfirmSignatureView.as_view(), name='confirm_signature'),
+    path('get_wallets_by_user/<str:email>/', GetWalletsByUserView.as_view(), name='get_wallets_by_user'),
     # path('', WalletListView.as_view(), name='wallet_list'),
     # path('<int:pk>/', WalletDetailView.as_view(), name='wallet_detail'),
     # path('new/', WalletCreateView.as_view(), name='wallet_create'),

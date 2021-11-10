@@ -4,7 +4,7 @@ import { Nav, Button } from 'react-bootstrap'
 import Link from "next/dist/client/link";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAddressBook, faAt, faGem, faHome, faUser, faUsers, faSearch, faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faUser, faWallet, faFileContract, faFileSignature } from '@fortawesome/free-solid-svg-icons'
 
 import styles from './LeftSideNav.module.scss'
 import { useRouter } from 'next/dist/client/router';
@@ -32,12 +32,12 @@ export default function LeftSideNav() {
       </Nav.Item>
       
       <Nav.Item as="li" className={styles.sidenavItem}>
-        <Link href={`/profile/${user.userdata.email}`} passHref>
+        <Link href={`/dashboard/${user.userdata.email}`} passHref>
           <Nav.Link className={styles.navLink}>
             <div className={styles.navIconContainer}>
               <FontAwesomeIcon icon={faUser} />
             </div>
-            <span className={styles.linkText}>Profile</span>
+            <span className={styles.linkText}>Dashboard</span>
           </Nav.Link>
         </Link>
       </Nav.Item>
@@ -46,9 +46,9 @@ export default function LeftSideNav() {
         <Link href="/" passHref>
           <Nav.Link href="#" className={styles.navLink}>
             <div className={styles.navIconContainer}>
-              <FontAwesomeIcon icon={faUsers} />
+              <FontAwesomeIcon icon={faWallet} />
             </div>
-            <span className={styles.linkText}>feature2</span>
+            <span className={styles.linkText}>Wallets</span>
           </Nav.Link>
         </Link>
       </Nav.Item>
@@ -57,39 +57,24 @@ export default function LeftSideNav() {
         <Link href="/" passHref>
           <Nav.Link href="#" className={styles.navLink}>
             <div className={styles.navIconContainer}>
-              <FontAwesomeIcon icon={faAt} />
+              <FontAwesomeIcon icon={faFileContract} />
             </div>
-            <span className={styles.linkText}>Notifications</span>
+            <span className={styles.linkText}>Contracts</span>
           </Nav.Link>
         </Link>
       </Nav.Item>
-      
+
       <Nav.Item as="li" className={styles.sidenavItem}>
         <Link href="/" passHref>
           <Nav.Link href="#" className={styles.navLink}>
             <div className={styles.navIconContainer}>
-              <FontAwesomeIcon icon={faSearch} />
+              <FontAwesomeIcon icon={faFileSignature} />
             </div>
-            <span className={styles.linkText}>Explore</span>
+            <span className={styles.linkText}>Create New Contract</span>
           </Nav.Link>
         </Link>
       </Nav.Item>
       
-      <Nav.Item as="li" className={styles.sidenavItem}>
-        <Link href="/" passHref>
-          <Nav.Link href="#" className={styles.navLink}>
-            <div className={styles.navIconContainer}>
-              <FontAwesomeIcon icon={faEnvelope} />
-            </div>
-            <span className={styles.linkText}>Messages</span>
-          </Nav.Link>
-        </Link>
-      </Nav.Item>
-      <Link href="/newpost" passHref>
-        <Button size='lg' className={styles.postButton}>
-          Post
-        </Button>
-      </Link>
     </>
   )
   const guestLinks = () => (
@@ -112,17 +97,6 @@ export default function LeftSideNav() {
     <Nav defaultActiveKey="/home" className={`flex-column ${styles.nav}`}>
       {user !== null && isAuthenticated !== false ? authLinks() : guestLinks()}
       
-      <Nav.Item as="li" className={styles.sidenavItem}>
-        <Link href="/" passHref>
-          <Nav.Link href="#" className={styles.navLink}>
-            <div className={styles.navIconContainer}>
-              <FontAwesomeIcon icon={faAddressBook} />
-            </div>
-            Example
-            {/* <span className={styles.linkText}>example</span> */}
-          </Nav.Link>
-        </Link>
-      </Nav.Item>
 
     </Nav>
   );

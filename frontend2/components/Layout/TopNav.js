@@ -35,7 +35,7 @@ export default function TopNav() {
           <small>tagline</small>
         </Navbar.Text>
         
-        <DarkModeButton />
+        
 
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
@@ -67,6 +67,8 @@ export default function TopNav() {
               </Link>
             </Navbar.Text>
           )}
+          
+          <DarkModeButton />
           
           </>
         </Navbar.Collapse>

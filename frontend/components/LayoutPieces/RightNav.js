@@ -28,13 +28,18 @@ export default function RightNav() {
     }
    ] = useLazyGetNonceQuery()
 
-  const handleLogin = async () => {
+  const handleConnectToSite = async () => {
     // get nonce associated with currentAddress from backend
-    try {
-      await getNonce(currentPublicAddress)
-      // console.log(`nonceData: ${nonceData}`)
-    } catch (error) {
-      console.log(nonceErrorMessage)
+    if (isAuthenticated) {
+      try {
+        await getNonce(currentPublicAddress)
+        // console.log(`nonceData: ${nonceData}`)
+      } catch (error) {
+        console.log(nonceErrorMessage)
+      }
+      
+    } else {
+      console.alert("must be logged in to connect wallet to service")
     }
       
     // sign message with nonce
@@ -64,7 +69,7 @@ export default function RightNav() {
   const guestLinks = (
     <>
       <div>
-        <Button variant="outline-warning" className={styles.loginButton} onClick={handleLogin}>
+        <Button variant="outline-warning" className={styles.loginButton} onClick={handleConnectToSite}>
           Connect to Site
         </Button>
       </div>

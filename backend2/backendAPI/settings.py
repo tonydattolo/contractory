@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     # project apps
     'accounts.apps.AccountsConfig',
     'profiles.apps.ProfilesConfig',
-    'posts.apps.PostsConfig',
+    # 'posts.apps.PostsConfig',
+    'wallets.apps.WalletsConfig',
+    'contracts.apps.ContractsConfig',
 
     # 3rd party
     'corsheaders',

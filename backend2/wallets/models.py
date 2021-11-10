@@ -20,4 +20,9 @@ class Wallet(models.Model):
     nonce = models.CharField(max_length=50, default=crypto.get_random_string(length=50))
     # nonce = models.UUIDField(default=uuid.uuid4().hex)
     ens = models.CharField(max_length=200, unique=True, validators=[ensDomainValidator], blank=True, null=True)
-    connected = models.BooleanField(default=False)
+    verified = models.BooleanField(default=False)
+    verified_at = models.DateTimeField(blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        # self.address = self.address.lower()
+        super(Wallet, self).save(*args, **kwargs)

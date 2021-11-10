@@ -10,8 +10,10 @@ import { faStop, faBan } from '@fortawesome/free-solid-svg-icons'
 import { setCurrentAddress, setENSname, setUser } from "slices/walletsSlice"
 import { useDispatch, useSelector } from "react-redux";
 import { useLazyGetUserQuery } from "slices/authAPI";
+import { useAddWalletMutation, useLazyGetNonceQuery, useConfirmSignatureMutation } from "slices/walletsAPI";
 
 import { utils } from 'ethers'
+import router from "next/router";
 
 export default function ConnectButton() {
 
@@ -20,33 +22,60 @@ export default function ConnectButton() {
   const { activateBrowserWallet, deactivate, account, library } = useEthers();
   const etherBalance = useEtherBalance(account);
   const ens = useLookupAddress()
-  const nonce = useSelector(state => state.auth.nonce)
+  // const nonce = useSelector(state => state.auth.nonce)
+  const access_token = useSelector(state => state.auth.access)
   
   const [isSigned, setIsSigned] = useState(false)
   const [signature, setSignature] = useState("")
+  const [nonce, setNonce] = useState("")
 
-  // const [
-  //   getUser, {
-  //     data: userData,
-  //     loading: userLoading,
-  //     error: userError
-  //   }
-  // ] = useLazyGetUserQuery()
+  const [
+    addWallet, {
+      loading: addWalletLoading,
+      error: addWalletError,
+      data: addWalletData,
+      isError: isAddWalletError,
+      isLoading: isAddWalletLoading,
+      isSuccess: isAddWalletSuccess
+    }
+  ] = useAddWalletMutation()
+
+  const [
+    getNonce, {
+      loading: getNonceLoading,
+      error: getNonceError,
+      data: getNonceData,
+      isError: isGetNonceError,
+      isLoading: isGetNonceLoading,
+      isSuccess: isGetNonceSuccess
+    }
+  ] = useLazyGetNonceQuery()
+
+  const [
+    confirmSignature, {
+      loading: confirmSignatureLoading,
+      error: confirmSignatureError,
+      data: confirmSignatureData,
+      isError: isConfirmSignatureError,
+      isLoading: isConfirmSignatureLoading,
+      isSuccess: isConfirmSignatureSuccess
+    }
+  ] = useConfirmSignatureMutation()
+
+
 
   // const handleSignedMessage = async e => {
   async function handleSignedMessage() {
 
-    const message = nonce
+    const nonce = getNonceData.nonce.nonce
+
     const signer = library.getSigner()
     const userAddress = await signer.getAddress()
     console.log(`userAddress: ${userAddress}`)
     // setSignature( await signer.signMessage(message) )
-    const returnedSignature = await signer.signMessage(message)
-    console.log(`returnedSignature: ${returnedSignature}`)
-    setSignature(returnedSignature)
-    alert(`returnedSignature: ${returnedSignature}`)
-    console.log(`signed message with signature: ${returnedSignature}`)
-    const signerAddress = utils.verifyMessage(message, returnedSignature)
+    const signature = await signer.signMessage(nonce)
+    alert(`signature: ${signature}`)
+    const signerAddress = utils.verifyMessage(nonce, signature)
     console.log(`signing address: ${signerAddress}`)
     if (account === signerAddress) {
       console.log('account equals signerAddress')
@@ -56,54 +85,62 @@ export default function ConnectButton() {
       account: ${account} \n
       signerAddress: ${signerAddress}`)
     }
+
+    await confirmSignature({ account, nonce, signature, access_token })
     
   }
   
-  const handleGetUser = async () => {
+  const handleVerify = async () => {
     try {
-      await getUser({ account, nonce, signature })
+      handleGetNonce()
+      console.log(`getNonceData.nonce ${getNonceData.nonce.nonce}`)
+      handleSignedMessage()
+
+      // handleConfirmSignature()
     } catch (error) {
-      console.log(`${error}`)
-      console.log(`${userError}`)
+      console.log(error)
+    }
+    
+  }
+  
+  const handleGetNonce = async () => {
+    try {
+      await getNonce({ account, access_token })
+      console.log(`getNonceData: ${getNonceData}`)
+    } catch (error) {
+      console.log(error)
     }
   }
+  const handleConfirmSignature = async () => {
+    try {
+      await confirmSignature({ account, message: nonce, returnedSignature: signature, access_token })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (isConfirmSignatureSuccess && !isConfirmSignatureError) {
+      console.log(`isConfirmSignatureSuccess: ${isConfirmSignatureSuccess}`)
+      alert('Signature confirmed')
+      router.push('dashboard', undefined, { shallow: true })
+    }
+  }, [isConfirmSignatureSuccess])
 
   // listener for isSigned
   useEffect(() => {
     if (isSigned && signature !== "") {
       console.log(`is signed: ${isSigned}`)
-      handleGetUser()
+      // handleGetUser()
     }
   }, [isSigned])
 
-  // listener for user data returned from server
-  // useEffect(() => {
-  //   if (userData) {
-  //     console.log(`userData: ${userData}`)
-  //     console.log(`userData.publicAddress: ${userData.publicAddress}`)
-
-  //     dispatch(setUser(userData))
-  //     // dispatch(setENSname(userData.name))
-  //   }
-  // }, [userData])
-
-  // listener for account
   useEffect(() => {
     // check if account is loaded successfully
     if (account !== null && library !== undefined) {
       // set address in redux state
-      // const { userAddress } = await library.getSigner().getAddress().then(result => result.data)
       console.log(`userAddress: ${account}`)
-      dispatch(setCurrentAddress( account ))
-
-      // grab nonce from backend for publicAddress
-
-      // handle signing message on frontend
-      // handleSignedMessage()
-
-      // post signed message to backend to authenticate
-
-      // handle returning 
+      // dispatch(setCurrentAddress( account ))
     }
   }, [account])
 
@@ -133,34 +170,57 @@ export default function ConnectButton() {
     }
   }, [account])
 
+  const handleAddWallet = async () => {
+    try {
+      console.log(`account in handleAddWallet: ${account}`)
+      // await addWallet({ 
+      //   variables: {
+      //     address: account,
+      //     access_token: access_token
+      //  }
+      // })
+      await addWallet({ account, access_token })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    if (isAddWalletSuccess && !isAddWalletError) {
+      router.push('/',undefined,{ shallow: true })
+    }
+  }, [isAddWalletSuccess])
+
   return (
     
     
     <div>
-      <Button variant="outline-success" onClick={handleSignedMessage}>Sign Test</Button>
       { account ? (
-        // container for ethereum balance and account listing
-        <div className={styles.buttonContainer}>
-          <div className={styles.ethBalance}>
-            {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
-          </div>
-          <div className={styles.accountInfo}>
+          // container for ethereum balance and account listing
+          <>
+          <div className={styles.buttonContainer}>
+            <div className={styles.ethBalance}>
+              {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
+            </div>
+            <div className={styles.accountInfo}>
 
-            {account && ens ? `${ens}` : account &&
-              `${shortenAddress(account)}`}
+              {account && ens ? `${ens}` : account &&
+                `${shortenAddress(account)}`}
 
-              {/* <Identicon /> */}
-              <div ref={acctIconRef} className={styles.accountIconStyle}>
-              </div>
+                {/* <Identicon /> */}
+                <div ref={acctIconRef} className={styles.accountIconStyle}>
+                  </div>
+            </div>
+            <Button variant="link" className={styles.disconnectButton}>
+              <FontAwesomeIcon className={styles.disconnectIcon} icon={faBan} onClick={handleDeactivate} />
+            </Button>
           </div>
-          <Button variant="link" className={styles.disconnectButton}>
-            <FontAwesomeIcon className={styles.disconnectIcon} icon={faBan} onClick={handleDeactivate} />
-          </Button>
-        </div>
+          <Button variant="outline-success" onClick={handleVerify}>Verify</Button>
+          <Button variant="outline-warning" onClick={handleAddWallet}>Add Wallet to SCaaS</Button>
+        </>
       ) : (
         <Button className="mx-3"variant="success" onClick={handleConnectWallet}>Connect Wallet</Button>
-      ) 
-    }
+        ) 
+      }
   </div>
   )
 }
