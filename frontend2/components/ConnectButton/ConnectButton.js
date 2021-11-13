@@ -186,7 +186,7 @@ export default function ConnectButton() {
   }
   useEffect(() => {
     if (isAddWalletSuccess && !isAddWalletError) {
-      router.push('/',undefined,{ shallow: true })
+      router.push('dashboard',undefined,{ shallow: true })
     }
   }, [isAddWalletSuccess])
 
