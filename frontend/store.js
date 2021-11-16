@@ -1,42 +1,51 @@
-import { useMemo } from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunkMiddleware from 'redux-thunk';
-import reducers from './reducers';
+import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query/react";
+import { authApi } from "slices/authAPI";
+import auth from 'slices/authSlice';
 
-let store;
+import { combineReducers } from "redux";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import {
+  FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER
+} from 'redux-persist'
 
-function initStore(initialState) {
-    return createStore(
-        reducers,
-        initialState,
-        composeWithDevTools(applyMiddleware(thunkMiddleware))
-    );
-};
+const reducers = combineReducers({
+  // Add the generated reducer as a specific top-level slice
+  [authApi.reducerPath]: authApi.reducer,
+  auth,
+})
 
-export const initializeStore = (preloadedState) => {
-    let _store = store ?? initStore(preloadedState);
-
-    // After navigating to a page with an initial Redux state, merge that state
-    // with the current state in the store, and create a new store
-    if (preloadedState && store) {
-        _store = initStore({
-        ...store.getState(),
-        ...preloadedState,
-        })
-        // Reset the current store
-        store = undefined;
-    }
-
-    // For SSG and SSR always create a new store
-    if (typeof window === 'undefined') return _store;
-    // Create the store once in the client
-    if (!store) store = _store;
-
-    return _store;
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage,
+  blacklist: [
+    authApi.reducerPath,
+    auth, 
+  ],
 }
 
-export function useStore(initialState) {
-    const store = useMemo(() => initializeStore(initialState), [initialState]);
-    return store;
-};
+const persistedReducer = persistReducer(persistConfig, reducers)
+
+export const makeStore = () =>
+  configureStore({
+    reducer: persistedReducer,
+    // Adding the api middleware enables caching, invalidation, polling,
+    // and other useful features of `rtk-query`.
+    middleware: (getDefaultMiddleware) => 
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        },
+      })
+        .concat(authApi.middleware)
+    
+  })
+  
+export const store = makeStore()
+
+// optional, but required for refetchOnFocus/refetchOnReconnect behaviors
+// see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
+setupListeners(store.dispatch)
+

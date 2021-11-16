@@ -1,11 +1,15 @@
 import Head from "next/head";
-import Sidenav from "@/components/Sidenav"
-import Topnav from './LayoutPieces/Topnav'
+import TopNav from "./LayoutPieces/TopNav";
+import SideNav from "./LayoutPieces/SideNav";
+import RightNav from "./LayoutPieces/RightNav";
+// import { useEffect } from "react";
+// import { useDispatch } from "react-redux";
+import { Container, Row, Col } from "react-bootstrap";
 
 export const siteTitle = "web3social dev";
 
 const Layout = ({ children, title, content }) => {
-// function Layout({ children, title, content }) {
+
   return (
     <>
       <Head>
@@ -16,35 +20,39 @@ const Layout = ({ children, title, content }) => {
         ></link>
 
         <title>{title}</title>
-        <meta
-          name="description"
-          content={content}
-        />
+        <meta name="description" content={content} />
 
         <link rel="icon" href="/favicon.ico" />
-        
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta charSet="UTF-8" />
       </Head>
 
-      <Topnav />
-      <Sidenav />
+      <TopNav />
+      <Container>
+        <Row>
+          <Col md={3}>
+            <SideNav />
+          </Col>
+          <Col md={6}>
+            <main>{children}</main>
+          </Col>
+          <Col md={3}>
+            <RightNav />
+          </Col>
+        </Row>
+      </Container>
 
-      <main>
-        {children}
-      </main>
-
-      
     </>
   );
-}
+};
 
 Layout.defaultProps = {
-  title: 'web3social',
-  description: 'mvp v0'
-}
+  title: "web3social",
+  description: "mvp v0",
+};
 
 export default Layout;

@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.sites', #sometimes theres errors where you need to set site to 1, idk google it
+    'django.contrib.sites', #sometimes theres errors where you need to set site to 1, idk google it
     
     # custom
     'accounts.apps.AccountsConfig',
@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     # 'djoser',
     # 'social_django',
     # 'rest_framework_simplejwt',
-    # 'rest_framework_simplejwt.token_blacklist'
+    # 'rest_framework_simplejwt.token_blacklist',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +72,7 @@ MIDDLEWARE = [
 ]
 
 # For django.contrib.sites
-# SITE_ID = 1
+SITE_ID = 1
 
 ROOT_URLCONF = 'api_config.urls'
 
@@ -86,7 +87,7 @@ ROOT_URLCONF = 'api_config.urls'
 # DRF settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -94,6 +95,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication', # JWT auth for drf
+        'web3auth.authentication.Web3Authentication'
         
     ],
     # 'DEFAULT_FILTER_BACKENDS': [
@@ -139,17 +141,17 @@ WSGI_APPLICATION = 'api_config.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'web3social',
-        'PASSWORD': 'postgres',
-        'USER': 'tony',
-        'HOST': 'localhost'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'web3social',
+    #     'PASSWORD': 'postgres',
+    #     'USER': 'tony',
+    #     'HOST': 'localhost'
+    # }
 }
 
 
