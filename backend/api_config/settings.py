@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     # 'djoser',
     # 'social_django',
     # 'rest_framework_simplejwt',
-    # 'rest_framework_simplejwt.token_blacklist'
+    # 'rest_framework_simplejwt.token_blacklist',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

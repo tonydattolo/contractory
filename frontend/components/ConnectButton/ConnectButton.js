@@ -7,8 +7,9 @@ import styles from './ConnectButton.module.scss'
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStop, faBan } from '@fortawesome/free-solid-svg-icons'
-import { setCurrentAddress } from "slices/authSlice"
-import { useDispatch } from "react-redux";
+import { setCurrentAddress, setENSname, setUser } from "slices/authSlice"
+import { useDispatch, useSelector } from "react-redux";
+import { useLazyGetUserQuery } from "slices/authAPI";
 
 import { utils } from 'ethers'
 
@@ -19,19 +20,33 @@ export default function ConnectButton() {
   const { activateBrowserWallet, deactivate, account, library } = useEthers();
   const etherBalance = useEtherBalance(account);
   const ens = useLookupAddress()
+  const nonce = useSelector(state => state.auth.nonce)
   
   const [isSigned, setIsSigned] = useState(false)
+  const [signature, setSignature] = useState("")
+
+  const [
+    getUser, {
+      data: userData,
+      loading: userLoading,
+      error: userError
+    }
+  ] = useLazyGetUserQuery()
 
   // const handleSignedMessage = async e => {
   async function handleSignedMessage() {
-    const message = "message to sign"
+
+    const message = nonce
     const signer = library.getSigner()
     const userAddress = await signer.getAddress()
     console.log(`userAddress: ${userAddress}`)
-    const signature = await signer.signMessage(message)
-    alert(`signature: ${signature}`)
-    console.log(`signed message with signature: ${signature}`)
-    const signerAddress = utils.verifyMessage(message, signature)
+    // setSignature( await signer.signMessage(message) )
+    const returnedSignature = await signer.signMessage(message)
+    console.log(`returnedSignature: ${returnedSignature}`)
+    setSignature(returnedSignature)
+    alert(`returnedSignature: ${returnedSignature}`)
+    console.log(`signed message with signature: ${returnedSignature}`)
+    const signerAddress = utils.verifyMessage(message, returnedSignature)
     console.log(`signing address: ${signerAddress}`)
     if (account === signerAddress) {
       console.log('account equals signerAddress')
@@ -42,12 +57,36 @@ export default function ConnectButton() {
       signerAddress: ${signerAddress}`)
     }
     
-    if (isSigned) {
-      console.log(`is signed: ${isSigned}`)
-    }
-    
   }
   
+  const handleGetUser = async () => {
+    try {
+      await getUser({ account, nonce, signature })
+    } catch (error) {
+      console.log(`${error}`)
+      console.log(`${userError}`)
+    }
+  }
+
+  // listener for isSigned
+  useEffect(() => {
+    if (isSigned && signature !== "") {
+      console.log(`is signed: ${isSigned}`)
+      handleGetUser()
+    }
+  }, [isSigned])
+
+  // listener for user data returned from server
+  useEffect(() => {
+    if (userData) {
+      console.log(`userData: ${userData}`)
+      console.log(`userData.publicAddress: ${userData.publicAddress}`)
+
+      dispatch(setUser(userData))
+      // dispatch(setENSname(userData.name))
+    }
+  }, [userData])
+
   // listener for account
   useEffect(() => {
     // check if account is loaded successfully
@@ -72,7 +111,7 @@ export default function ConnectButton() {
   useEffect(() => {
     console.log(`ens: ${ens}`)
     if (ens !== undefined && ens !== null) {
-      
+      dispatch(setENSname(ens))
     }
   }, [ens])
   
@@ -80,6 +119,11 @@ export default function ConnectButton() {
     activateBrowserWallet()
   }
 
+  const handleDeactivate = () => {
+    deactivate()
+    dispatch(setCurrentAddress(null))
+    dispatch(setENSname(null))
+  }
   
   const acctIconRef = useRef()
   useEffect(() => {
@@ -110,7 +154,7 @@ export default function ConnectButton() {
               </div>
           </div>
           <Button variant="link" className={styles.disconnectButton}>
-            <FontAwesomeIcon className={styles.disconnectIcon} icon={faBan} onClick={deactivate} />
+            <FontAwesomeIcon className={styles.disconnectIcon} icon={faBan} onClick={handleDeactivate} />
           </Button>
         </div>
       ) : (

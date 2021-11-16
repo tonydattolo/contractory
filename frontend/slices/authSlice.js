@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { PURGE } from "redux-persist";
 
 const slice = createSlice({
   name: 'auth',
@@ -8,7 +9,8 @@ const slice = createSlice({
     access: null,
     refresh: null,
     currentAddress: null,
-    ENSname: null
+    ENSname: null,
+    nonce: null,
   },
   reducers: {
     setToken: (state, {payload: { access, refresh }}) => {
@@ -23,17 +25,29 @@ const slice = createSlice({
     setAuthenticated: (state) => {
       state.isAuthenticated = true
     },
-    setLogout: (state) => {
+    setLogout: (PURGE, (state) => {
       state.user = null
       state.isAuthenticated = false
       state.access = null
       state.refresh = null
-    },
+    }),
     setCurrentAddress: (state, { payload }) => {
       state.currentAddress = payload
     },
     setENSname: (state, { payload }) => {
       state.ENSname = payload
+    },
+    setDeactivate: (PURGE, (state) => {
+      state.user = null
+      state.isAuthenticated = false
+      state.access = null
+      state.refresh = null
+      state.currentAddress = null
+      state.ENSname = null
+      state.nonce = null
+    }),
+    setNonce: (state, { payload }) => {
+      state.nonce = payload
     }
   },
   extraReducers: (builder) => {
@@ -61,7 +75,9 @@ export const {
   setToken,
   setUser,
   setAuthenticated,
-  setCurrentAddress
+  setCurrentAddress,
+  setENSname,
+  setNonce,
 } = slice.actions
 export default slice.reducer
 export const selectCurrentUser = (state) => state.auth.user
@@ -69,3 +85,5 @@ export const selectIsAuthenticated = (state) => state.auth.isAuthenticated
 export const selectToken = (state) => state.auth.token
 export const selectAccess = (state) => state.auth.access
 export const selectRefresh = (state) => state.auth.refresh
+export const selectCurrentAddress = (state) => state.auth.currentAddress
+export const selectENSname = (state) => state.auth.ENSname

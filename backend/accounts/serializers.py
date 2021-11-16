@@ -5,8 +5,11 @@ USER = get_user_model
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = USER
-        fields = ('publicAddress','nonce')
+        model = User
+        fields = ('publicAddress','ens',)
+
+#         model = USER
+#         fields = ('publicAddress','nonce')
 
 class NonceSerializer(serializers.ModelSerializer):
     class Meta:

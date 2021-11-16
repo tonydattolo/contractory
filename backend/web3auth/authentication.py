@@ -9,11 +9,11 @@ from rest_framework import exceptions
 
 
 class Web3Authentication(authentication.BaseAuthentication):
-    def authenticate(self, request, address=None, token=None, signature=None):
+    def authenticate(self, request, address, nonce, signature):
         # get custom user model
         User = get_user_model()
         # check if the address the user has provided matches the signature
-        if not address == recover_to_addr(token, signature):
+        if not address == recover_to_addr(nonce, signature):
             return None
         else:
             try:
@@ -22,4 +22,4 @@ class Web3Authentication(authentication.BaseAuthentication):
                 raise exceptions.AuthenticationFailed('no such user')
             
         return (user, None)
-            # return user
+        # return user

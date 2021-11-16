@@ -3,56 +3,40 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:8000/auth/',
+    baseUrl: 'http://localhost:8000/api/accounts/',
     prepareHeaders: (headers, { getState }) => {
-      const isAuthenticated = getState().auth.isAuthenticated
-      const token = getState().auth.token
-      const user = getState().auth.user
-      const access = getState().auth.access
-      const refresh = getState().auth.refresh
-      if (access && refresh) {
-        // headers.set("authentication", `Bearer ${token}`)
-        headers.set("Authentication", `JWT ${access}`)
-        headers.set("Accept", "application/json")
-        headers.set("Content-Type", "application/json")
-      }
+      // const isAuthenticated = getState().auth.isAuthenticated
+      // const token = getState().auth.token
+      // const user = getState().auth.user
+      // const access = getState().auth.access
+      // const refresh = getState().auth.refresh
+      // if (access && refresh) {
+      //   // headers.set("authentication", `Bearer ${token}`)
+      //   headers.set("Authentication", `JWT ${access}`)
+      //   headers.set("Accept", "application/json")
+      //   headers.set("Content-Type", "application/json")
+      // }
       headers.set("Accept", "application/json")
       headers.set("Content-Type", "application/json")
       return headers
     }
   }),
+  tagTypes: ["nonce"],
   endpoints: (builder) => ({
-    signup: builder.mutation({
-      query(data) {
-        const { publicAddress } = data
-        return {
-          url: '/api/accounts/signup', // sends request 
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          method: 'POST',
-          body: {
-            publicAddress: `${publicAddress}`
-          }
-        }
-      }
-    }),
-    registerAddress: builder.mutation({
-
-    }),
     getNonce: builder.query({
-      query(data) {
-        const { publicAddress } = data
-        return {
-          url: '',
-          method: '',
-          body: {
-
-          }
-        }
-      }
-    })
+      query: (address) => `getNonce/${address}/`,
+      providesTags: ['nonce']
+    }),
+    // getUser: builder.query({
+    //   query(data) {
+    //     url: `getUser/`,
+    //   }
+      // providesTags: ['user']
+    // }),
+    getUser: builder.query({
+      query: (data) => `getUser/${data.account}/${data.nonce}/${data.signature}`,
+      // providesTags: ['user']
+    }),
   
   })
 })
@@ -65,6 +49,7 @@ export const authApi = createApi({
 export const { 
   // useUserCreateMutation, # examples
   // useGoogleLoginQuery, # examples
-  useSignupMutation,
+  useLazyGetNonceQuery,
+  useLazyGetUserQuery,
 
 } = authApi
