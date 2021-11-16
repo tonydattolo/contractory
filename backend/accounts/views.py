@@ -126,12 +126,25 @@ class LoadUserView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-    # def get_authenticators(self):
-    #     return super().get_authenticators()
+class GetNonceView(APIView):
+    def get(self, request):
+        try:
+            userid = request.data['publicAddress']
+            try:
+                nonce = NonceSerializer(userid)
+            except User.DoesNotExist:
+                try:
+                    
+                except:
+                return Response({'error': 'address not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'nonce': nonce.data},
+                status=status.HTTP_200_OK
+            )
+        except:
+            return Response(
+                {'error': 'not able to get nonce'},
+                status=
+            )
 
-    # def get_authenticate_header(self, request):
-    #     return super().get_authenticate_header(request)
-    
-    # def perform_authentication(self, request):
-    #     return super().perform_authentication(request)
-
+            
