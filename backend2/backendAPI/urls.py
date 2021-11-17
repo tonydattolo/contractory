@@ -47,7 +47,7 @@ urlpatterns = [
     # Wallets
     path('wallets/', include('wallets.urls')),
     # Contracts
-    # path('contracts/', include('contracts.urls')),
+    path('contracts/', include('contracts.urls')),
 ]
 
 # urlpatterns += [re_path(r'^.*', TemplateView.as_view(template_name='index.html'))]

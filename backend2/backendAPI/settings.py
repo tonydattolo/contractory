@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'profiles.apps.ProfilesConfig',
     # 'posts.apps.PostsConfig',
     'wallets.apps.WalletsConfig',
-    # 'contracts.apps.ContractsConfig',
+    'contracts.apps.ContractsConfig',
 
     # 3rd party
     'corsheaders',

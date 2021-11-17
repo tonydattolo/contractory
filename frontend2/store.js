@@ -4,10 +4,12 @@ import { authApi } from "slices/authAPI";
 import { profileApi } from "slices/profileAPI";
 import { postsApi } from "slices/postsAPI";
 import { walletsApi } from "slices/walletsAPI"
+import { contractsApi } from "slices/contractsAPI"
 import auth from 'slices/authSlice';
 import profile from 'slices/profileSlice'
 import posts from 'slices/postsSlice'
 import wallets from 'slices/walletsSlice'
+import contracts from 'slices/contractsSlice'
 
 import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
@@ -20,12 +22,12 @@ const reducers = combineReducers({
   // Add the generated reducer as a specific top-level slice
   [authApi.reducerPath]: authApi.reducer,
   [profileApi.reducerPath]: profileApi.reducer,
-  [postsApi.reducerPath]: postsApi.reducer,
   [walletsApi.reducerPath]: walletsApi.reducer,
+  [contractsApi.reducerPath]: contractsApi.reducer,
   auth,
   profile,
-  posts,
-  wallets
+  wallets,
+  contracts,
 })
 
 const persistConfig = {
@@ -35,12 +37,12 @@ const persistConfig = {
   blacklist: [
     authApi.reducerPath,
     profileApi.reducerPath,
-    postsApi.reducerPath,
     walletsApi.reducerPath,
+    contractsApi.reducerPath,
     auth, 
     profile,
-    posts,
-    wallets
+    wallets,
+    contracts,
   ],
 }
 
@@ -61,6 +63,7 @@ export const makeStore = () =>
         .concat(profileApi.middleware)
         .concat(postsApi.middleware)
         .concat(walletsApi.middleware)
+        .concat(contractsApi.middleware)
     
   })
   

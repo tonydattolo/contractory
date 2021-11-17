@@ -29,6 +29,8 @@ export default function ConnectButton() {
   const [signature, setSignature] = useState("")
   const [nonce, setNonce] = useState("")
 
+  const currentUser = useSelector(state => state.auth.user)
+
   const [
     addWallet, {
       loading: addWalletLoading,
@@ -186,7 +188,7 @@ export default function ConnectButton() {
   }
   useEffect(() => {
     if (isAddWalletSuccess && !isAddWalletError) {
-      router.push('dashboard',undefined,{ shallow: true })
+      router.push(`/dashboard/${currentUser.userdata.email}`, undefined, { shallow: true })
     }
   }, [isAddWalletSuccess])
 
