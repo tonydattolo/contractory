@@ -7,13 +7,16 @@ const slice = createSlice({
     user: null,
     isAuthenticated: false,
     access: null,
-    refresh: null
+    refresh: null,
+    lastRefresh: null,
   },
   reducers: {
     setToken: (state, {payload: { access, refresh }}) => {
       state.access = access
       state.refresh = refresh
       state.isAuthenticated = true
+      // state.lastRefresh = Date.now()
+      state.lastRefresh = new Date()
     },
     setUser: (state, { payload }) => {
     // setUser: (state, { payload: { user } }) => {
@@ -27,7 +30,10 @@ const slice = createSlice({
       state.isAuthenticated = false
       state.access = null
       state.refresh = null
-    })
+    }),
+    setAccess: (state, { payload: { access } }) => {
+      state.access = access
+    }
   },
   extraReducers: (builder) => {
     // https://redux-toolkit.js.org/usage/usage-guide#use-with-redux-persist
@@ -59,7 +65,8 @@ export const {
   setCredentials,
   setToken,
   setUser,
-  setAuthenticated
+  setAuthenticated,
+  setAccess
 } = slice.actions
 export default slice.reducer
 export const selectCurrentUser = (state) => state.auth.user

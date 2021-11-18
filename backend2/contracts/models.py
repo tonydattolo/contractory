@@ -33,6 +33,10 @@ class SmartContract(models.Model):
         ('complete', 'completed smart contract transactions or expiration'),
     ]
     status = models.CharField(choices=status_choices, default='draft', max_length=20)
+
+    # list here for all authorized parties to read and/or write contracts
+    authorized_parties = models.ManyToManyField(USER, related_name='authorized_parties')
+    
     
     
 

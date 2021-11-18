@@ -105,6 +105,18 @@ export const authApi = createApi({
         }
       }
     }),
+    refreshToken: builder.mutation({
+      query(data) {
+        const { refresh } = data
+        return {
+          url: 'jwt/refresh/',
+          method: 'POST',
+          body: {
+            refresh: `${refresh}`
+          }
+        }
+      }
+    }),
     googleLogin: builder.query({
       // transformResponse: (response) => response.data,
       query() {
