@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import authentication, generics, status, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.core.mail import send_mail
 
 from .models import SmartContract, Clause, Party
 from .serializers import SmartContractSerializer, ClauseSerializer, PartySerializer
@@ -62,7 +63,7 @@ class SmartContractListViewByOwner(APIView):
     
     def get(self, request, email, type):
         owner = request.user
-        print(f'{owner=}, {email=}, {type=}')
+        # print(f'{owner=}, {email=}, {type=}')
         # type = request.data['type']
         # email = request.data['email']
         
@@ -165,7 +166,78 @@ class GetContractDetailView(APIView):
                 {"message": f"error getting smart contract:{e=}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-# class InvitePartyToSmartContractView(APIView):
-#     """
-#     Invite party to smart contract view
-#     """
+class AddPartyToSmartContractView(APIView):
+    """
+    Invite party to smart contract view, through an email request
+    """
+    def post(self, request, id):
+        try:
+            invitingParty = request.user
+            newParty = request.data['newParty']
+            newPartyRole = request.data['newPartyRole']
+            newPartyInviteMessage = request.data['newPartyInviteMessage']
+            print(f'{invitingParty=}, {newParty=}, {newPartyRole=}, {newPartyInviteMessage=}')
+            
+            if not invitingParty or not newParty or not newPartyRole or not newPartyInviteMessage:
+                return Response({"message": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            smartContract = SmartContract.objects.get(id=id)
+            
+            if smartContract.status == "live" and newPartyRole != "viewer":
+                return Response({"message": "Cannot invite an active party to a live smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            if smartContract.status == "completed" and newPartyRole != "viewer":
+                return Response({"message": "Cannot invite an active party to a completed smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # handle if the inviting party is not a party to the smart contract
+            if not smartContract.party_set.filter(user=invitingParty).exists():
+                return Response(
+                    {"message": "You are not a party to this smart contract"},
+                    status=status.HTTP_400_BAD_REQUEST)
+            
+            # handle if the user is already a party
+            if smartContract.party_set.filter(party=newParty).exists():
+                return Response(
+                    {"message": "This person is already a party on this contract"},
+                    status=status.HTTP_400_BAD_REQUEST)
+                
+            # handle if the newParty user is not already signed up
+            if not USER.objects.filter(email=newParty).exists():
+                return Response(
+                    {"message": "This person is not signed up"},
+                    status=status.HTTP_404_NOT_FOUND)
+            
+            # handle if newParty user is signed up, but not verified
+            if not USER.objects.filter(email=newParty, is_verified=True).exists():
+                return Response(
+                    {"message": "This person is not verified"},
+                    status=status.HTTP_412_PRECONDITION_FAILED)
+            
+            
+            
+            try:
+                send_mail(
+                    subject="You've been invited to a Smart Contract",
+                    message=f'{invitingParty.email} has invited you to be a {newPartyRole} party, \
+                    on the {smartContract.name} smart contract',
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[newParty],
+                    fail_silently=False,
+                )
+                return Response(
+                    {"message": "Invitation sent via email successfully"},
+                    status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response(
+                    {"message": f"error sending email:{e=}"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+                    
+                    
+                    
+            
+            
+            
+        except Exception as e:
+            return Response(
+                {"message": f"error adding party to smart contract:{e=}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)

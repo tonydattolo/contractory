@@ -1,4 +1,4 @@
-import { Spinner, Button, Alert, Card, ListGroup } from "react-bootstrap"
+import { Spinner, Button, Alert, Card, ListGroup, Modal, Row, Col } from "react-bootstrap"
 import { useEffect, useState } from "react"
 import { useGetContractDetailsQuery } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
@@ -10,7 +10,7 @@ export default function ContractDetail() {
   // router.prefetch("/contracts/detail/[contract_id]")
   const { contract_id } = router.query
   const access_token = useSelector(state => state.auth.access)
-
+  const currentUser = useSelector(state => state.auth.user)
   const {
     data: contractData,
     loading: contractLoading,
@@ -19,6 +19,26 @@ export default function ContractDetail() {
     isError: contractIsError,
     isSuccess: contractIsSuccess
   } = useGetContractDetailsQuery({ contract_id, access_token })
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const handleCloseDeleteConfirm = () => setShowDeleteConfirm(false)
+  const handleShowDeleteConfirm = () => setShowDeleteConfirm(true)
+
+  const handleDeleteContract = async () => {
+    try {
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleAddParty = () => {
+    router.push(
+      `/contracts/detail/add_party/${contract_id}`,
+      undefined,
+      { shallow: true }
+    )
+  }
 
   return (
     <>
@@ -47,7 +67,20 @@ export default function ContractDetail() {
               </ListGroup>
             </Card.Body>
             <Card.Header>
-              <h3>Contract participants</h3>
+              <Row>
+                <Col>
+                  <h3>Contract Parties</h3>
+                </Col>
+                <Col>
+                  <Button 
+                    variant="primary"
+                    style={{ float: "right", }}
+                    onClick={handleAddParty}
+                  >
+                    Add Party
+                  </Button>
+                </Col>
+              </Row>
             </Card.Header>
             <Card.Body>
               {contractData.parties.map(party => (
@@ -55,6 +88,7 @@ export default function ContractDetail() {
                   <ListGroup.Item>{party.partyEmail}</ListGroup.Item>
                   <ListGroup.Item>{party.role}</ListGroup.Item>
                   <ListGroup.Item>{party.description}</ListGroup.Item>
+                  <Button variant="danger">Delete Party</Button>
                 </ListGroup>
               ))}
             </Card.Body>
@@ -79,8 +113,26 @@ export default function ContractDetail() {
             {
               router.push(`/contracts/edit/${contract_id}`, undefined, { shallow: true })
             }}>Edit</Button>
+          <Button variant="danger" onClick={handleShowDeleteConfirm}>Delete</Button>
         </>
       )}
+
+      <Modal show={showDeleteConfirm} onHide={handleCloseDeleteConfirm}>
+        <Modal.Header>
+          <Modal.Title>Delete contract</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this contract?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDeleteConfirm}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={handleDeleteContract}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
     </>
   )

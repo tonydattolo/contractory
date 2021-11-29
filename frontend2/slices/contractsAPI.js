@@ -88,14 +88,41 @@ export const contractsApi = createApi({
       invalidatesTags: ["contracts"],
     }),
 
-  }),
-});
+    addPartyToContract: builder.mutation({
+      query(data) {
+        const { 
+          contract_id,
+          access_token,
+          newParty,
+          newPartyRole,
+          newPartyInviteMessage
+        } = data
+        return {
+          url: `add_party/${contract_id}/`,
+          headers: {
+            Authorization: `JWT ${access_token}`,
+          },
+          method: "POST",
+          body: {
+            newParty: `${newParty}`,
+            newPartyRole: `${newPartyRole}`,
+            newPartyInviteMessage: `${newPartyInviteMessage}`,
+          },
+        }
+      }
+    }),
+
+
+
+  })
+})
 
 export const {
   useCreateContractMutation,
   useGetAllContractsQuery,
   useGetDraftContractsByUserQuery,
   useDeleteContractMutation,
-  useGetContractDetailsQuery
+  useGetContractDetailsQuery,
+  useAddPartyToContractMutation,
   // useLazyGetContractsByUserQuery
 } = contractsApi
