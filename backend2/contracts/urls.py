@@ -4,10 +4,12 @@ from .views import (
     CreateSmartContractView,
     SmartContractListViewByOwner,
     SmartContractDeleteView,
+    GetContractDetailView
     )
 
 urlpatterns = [
     path('create/', CreateSmartContractView.as_view(), name='create'),
     path('list/<str:email>/<str:type>/', SmartContractListViewByOwner.as_view(), name='list'),
-    path('delete/<int:id>/', SmartContractDeleteView.as_view(), name='delete'),
+    path('delete/<str:id>/', SmartContractDeleteView.as_view(), name='delete'),
+    path('detail/<str:id>/', GetContractDetailView.as_view(), name='detail'),
 ]

@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework import authentication, generics, status, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import SmartContract, Clause
-from .serializers import SmartContractSerializer, ClauseSerializer
+from .models import SmartContract, Clause, Party
+from .serializers import SmartContractSerializer, ClauseSerializer, PartySerializer
 from django.contrib.auth import get_user_model
 
 USER = get_user_model()
@@ -37,6 +37,13 @@ class CreateSmartContractView(APIView):
                 description=description
             )
             smartContract.save()
+            party = Party.objects.create(
+                contract=smartContract,
+                party=owner,
+                role='sender'
+            )
+            print(f'{party=}')
+            party.save()
             return Response(
                 {"success":"smart contract successfully created"},
                 status=status.HTTP_201_CREATED
@@ -91,7 +98,11 @@ class SmartContractListViewByStatus(APIView):
         status = request.data["status"]
         
         try:
-            smartContracts = SmartContract.objects.filter(status=status)
+            smartContracts = SmartContract.objects.filter(
+                status=status,
+                # owner=request.user,
+                party__user=request.user
+                )
             serializer = SmartContractSerializer(smartContracts, many=True)
             return Response(
                 {"contracts": serializer.data},
@@ -127,8 +138,34 @@ class SmartContractDeleteView(APIView):
                 {"message": f"error deleting smart contract:{e=}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class GetContractDetailView(APIView):
+    """
+    Get contract detail view
+    """
+    permission_classes = [permissions.IsAuthenticated,]
+    authentication_classes = [JWTAuthentication,]
+    
+    def get(self, request, id):
+        try:
+            smartContract = SmartContract.objects.get(id=id)
+            
+            # if smartContract.owner != request.user:
+            #     return Response({"message": "You are not the owner of this smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            clauses = smartContract.clause_set.all()
+            parties = smartContract.party_set.all()
+            return Response(
+                {"contract": SmartContractSerializer(smartContract).data,
+                 "clauses": ClauseSerializer(clauses, many=True).data,
+                 "parties": PartySerializer(parties, many=True).data},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"message": f"error getting smart contract:{e=}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 # class InvitePartyToSmartContractView(APIView):
 #     """
 #     Invite party to smart contract view
 #     """
-    

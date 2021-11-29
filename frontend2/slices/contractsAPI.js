@@ -24,11 +24,11 @@ export const contractsApi = createApi({
       query: () => "",
       providesTags: ["contracts"],
     }),
-    getContractsByUser: builder.query({
+    getDraftContractsByUser: builder.query({
       query(data) {
-        const { email, access_token, type } = data
+        const { email, access_token } = data
         return {
-          url: `list/${email}/${type}/`,
+          url: `list/${email}/draft/`,
           // params: {
           //   email,
           //   type
@@ -61,6 +61,19 @@ export const contractsApi = createApi({
       },
       invalidatesTags: ["contracts"],
     }),
+    getContractDetails: builder.query({
+      query(data) {
+        const { contract_id, access_token } = data;
+        return {
+          url: `/detail/${contract_id}/`,
+          headers: {
+            Authorization: `JWT ${access_token}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
     deleteContract: builder.mutation({
       query(data) {
         const { contractIDtoDelete, access_Token } = data;
@@ -74,13 +87,15 @@ export const contractsApi = createApi({
       },
       invalidatesTags: ["contracts"],
     }),
+
   }),
 });
 
 export const {
   useCreateContractMutation,
   useGetAllContractsQuery,
-  // useGetContractsByUserQuery,
+  useGetDraftContractsByUserQuery,
   useDeleteContractMutation,
-  useLazyGetContractsByUserQuery
+  useGetContractDetailsQuery
+  // useLazyGetContractsByUserQuery
 } = contractsApi

@@ -19,7 +19,7 @@ export default function Contract({ contract }) {
               Contract: {contract.name}
             </Col>
             <Col>
-              <Link href={`/contracts/[id]`} as={`/contracts/${contract.id}`}>
+              <Link href={`/contracts/detail/${contract.id}`} passHref>
                 <Button variant="primary">
                   View
                 </Button>

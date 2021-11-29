@@ -43,6 +43,30 @@ class SmartContract(models.Model):
     # payingParties = models.ManyToManyField('PayingParty', blank=True)
     # viewingParties = models.ManyToManyField('ViewingParty', blank=True)
     # lawyers = models.ManyToManyField('Lawyer', blank=True)
+    
+    def add_party(self, party):
+        """
+        This method adds a party to the smart contract.
+        """
+        self.add_party.add(party)
+    
+    def remove_party(self, party):
+        """
+        This method removes a party from the smart contract.
+        """
+        self.remove_party.delete(party)
+        
+    def add_clause(self, clause):
+        """
+        This method adds a clause to the smart contract.
+        """
+        self.add_clause.add(clause)
+        
+    def remove_clause(self, clause):
+        """
+        This method removes a clause of the smart contract.
+        """
+        self.remove_clause.delete(clause)
 
     
 
@@ -51,9 +75,11 @@ class Party(models.Model):
     This class represents the Party model.
     """
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    contract = models.ForeignKey(SmartContract, on_delete=CASCADE)
     party = models.ForeignKey(USER, on_delete=CASCADE)
+    name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    address = models.CharField(max_length=42, unique=True, validators=[ethereumAddressValidator])
+    # address = models.CharField(max_length=42, unique=True, validators=[ethereumAddressValidator])
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
