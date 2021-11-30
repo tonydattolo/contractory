@@ -77,11 +77,11 @@ export const contractsApi = createApi({
     }),
     deleteContract: builder.mutation({
       query(data) {
-        const { contract_id, access_Token } = data;
+        const { contract_id, access_token } = data;
         return {
           url: `delete/${contract_id}/`,
           headers: {
-            Authorization: `JWT ${access_Token}`,
+            Authorization: `JWT ${access_token}`,
           },
           method: "DELETE",
         };

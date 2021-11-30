@@ -8,7 +8,7 @@ import Contract from "@/components/Contracts/Contract"
 
 export default function Contracts() {
 
-  const [key, setKey] = useState("drafts")
+  const [key, setKey] = useState("draft")
 
   const access_token = useSelector(state => state.auth.access)
   const email = useSelector(state => state.auth.user.userdata.email)
@@ -33,7 +33,7 @@ export default function Contracts() {
   // }
 
   useEffect(() => {
-    console.log(`key: ${key}`)
+    // console.log(`key: ${key}`)
     if (key === "draft") {
       // handleGetDrafts("draft")
     }
@@ -46,7 +46,7 @@ export default function Contracts() {
 
 
       <Tabs 
-        defaultActiveKey="Drafts" 
+        defaultActiveKey="draft" 
         id="contract-tabs" 
         className="mb-3"
         activeKey={key}
@@ -68,34 +68,6 @@ export default function Contracts() {
               ))}
             </>
           )}
-
-          {/* {draftIsLoading ? (
-            <Spinner animation="border" role="status"></Spinner>
-            ) : (
-              <>
-                {draftIsError ? (
-                  <>
-                    <p>Error</p>
-                    <Button onClick={handleGetDrafts(key)}>Retry</Button>
-                  </>
-                  ) : (
-                  <>
-                    {draftData && draftData.contracts.length > 0 ? (
-                      <>
-                        <h3>Contract Drafts: </h3>
-                        <br />
-                        {draftData.contracts.map(contract => (
-                          <Contract key={contract.id} contract={contract} />
-                        ))}
-                      </>
-                    ) : (
-                      <p>No contracts found</p>
-                    )}
-                  </>
-                )}
-              </>
-            )
-          } */}
 
         </Tab>
 
