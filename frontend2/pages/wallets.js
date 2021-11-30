@@ -9,7 +9,7 @@ export default function Wallets() {
 
   const currentUser = useSelector(state => state.auth.user)
   const access_token = useSelector(state => state.auth.access)
-  const email = currentUser.userdata.email
+  const email = currentUser.userdata.email ?? ""
 
   const {
     data: walletsData,
@@ -46,6 +46,7 @@ export default function Wallets() {
           </>
         )
       }
-      </>    </div>
+      </>    
+    </div>
   )
 }

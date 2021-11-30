@@ -1,9 +1,9 @@
-import { Form, Spinner, Button, Alert } from "react-bootstrap"
+import { Form, Spinner, Button, Alert, Breadcrumb } from "react-bootstrap"
 import { useEffect, useState } from "react"
 import { useAddPartyToContractMutation } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
-
+import Link from "next/dist/client/link"
 
 export default function AddPartyToContract() {
 
@@ -54,6 +54,14 @@ export default function AddPartyToContract() {
 
   return (
     <>
+      <Breadcrumb>
+        {/* <Breadcrumb.Item href="/">Home</Breadcrumb.Item> */}
+        <Link href={`/contracts/detail/${contract_id}`} passHref>
+          <Breadcrumb.Item>Contract Detail</Breadcrumb.Item>
+        </Link>
+        <Breadcrumb.Item active>Add Party</Breadcrumb.Item>
+      </Breadcrumb>
+
       {addPartyIsError && (
         <Alert variant="danger">
           {addPartyError.data.message}

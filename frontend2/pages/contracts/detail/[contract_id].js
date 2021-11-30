@@ -43,7 +43,7 @@ export default function ContractDetail() {
   return (
     <>
       {contractIsLoading && <Spinner animation="border" variant="primary" />}
-      {contractIsError && <Alert variant="danger">{contractError.data.message}</Alert>}
+      {contractIsError && contractError.data && <Alert variant="danger">{contractError.data.message}</Alert>}
       {contractIsSuccess && contractData && (
         <>
           <Card className={`mt-4`}>

@@ -73,6 +73,7 @@ export const contractsApi = createApi({
           },
         };
       },
+      providesTags: ["contractDetail"],
     }),
     deleteContract: builder.mutation({
       query(data) {
@@ -109,7 +110,8 @@ export const contractsApi = createApi({
             newPartyInviteMessage: `${newPartyInviteMessage}`,
           },
         }
-      }
+      },
+      invalidatesTags: ["contractDetail"],
     }),
 
 

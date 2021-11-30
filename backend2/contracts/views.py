@@ -2,7 +2,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import authentication, generics, status, permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
+from django.conf import settings
 
 from .models import SmartContract, Clause, Party
 from .serializers import SmartContractSerializer, ClauseSerializer, PartySerializer
@@ -178,6 +179,8 @@ class AddPartyToSmartContractView(APIView):
             newPartyInviteMessage = request.data['newPartyInviteMessage']
             print(f'{invitingParty=}, {newParty=}, {newPartyRole=}, {newPartyInviteMessage=}')
             
+            emailContent = ""
+            
             if not invitingParty or not newParty or not newPartyRole or not newPartyInviteMessage:
                 return Response({"message": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -188,39 +191,56 @@ class AddPartyToSmartContractView(APIView):
             if smartContract.status == "completed" and newPartyRole != "viewer":
                 return Response({"message": "Cannot invite an active party to a completed smart contract"}, status=status.HTTP_400_BAD_REQUEST)
             
-            # handle if the inviting party is not a party to the smart contract
-            if not smartContract.party_set.filter(user=invitingParty).exists():
-                return Response(
-                    {"message": "You are not a party to this smart contract"},
-                    status=status.HTTP_400_BAD_REQUEST)
-            
-            # handle if the user is already a party
-            if smartContract.party_set.filter(party=newParty).exists():
-                return Response(
-                    {"message": "This person is already a party on this contract"},
-                    status=status.HTTP_400_BAD_REQUEST)
-                
             # handle if the newParty user is not already signed up
             if not USER.objects.filter(email=newParty).exists():
+                emailContent = f"{invitingParty.email} has invited you to be a {newPartyRole} party, \
+                    on the {smartContract.name} smart contract. \n However, you have not signed up yet. \
+                    To signup, please visit {f'localhost:3000/signup'} \n \n \ "
                 return Response(
                     {"message": "This person is not signed up"},
                     status=status.HTTP_404_NOT_FOUND)
             
             # handle if newParty user is signed up, but not verified
-            if not USER.objects.filter(email=newParty, is_verified=True).exists():
+            if not USER.objects.filter(email=newParty, is_active=True).exists():
+                emailContent = f"{invitingParty.email} has invited you to be a {newPartyRole} party, \
+                    on the {smartContract.name} smart contract. \n However, you have not activated your account yet. \
+                    To activate, please visit {f'localhost:3000/resendactivationemail'} \n \n \ "
                 return Response(
                     {"message": "This person is not verified"},
                     status=status.HTTP_412_PRECONDITION_FAILED)
+                
+            # handle if the inviting party is not a party to the smart contract
+            # if not smartContract.party_set.filter(party__email=invitingParty).exists():
+            #     return Response(
+            #         {"message": "You are not a party to this smart contract"},
+            #         status=status.HTTP_400_BAD_REQUEST)
             
-            
+            # handle if the user is already a party
+            if smartContract.party_set.filter(party__email=newParty).exists():
+                return Response(
+                    {"message": "This person is already a party on this contract"},
+                    status=status.HTTP_400_BAD_REQUEST)
+                
             
             try:
+                user = USER.objects.get(email=newParty)
+                party = Party.objects.create(party=user, role=newPartyRole, contract=smartContract)
+                party.save()
+                smartContract.party_set.add(party)
+                smartContract.save()
+            except Exception as e:
+                return Response(
+                    {"message": f"error creating party:{e=}"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+            
+            try:
+                
                 send_mail(
                     subject="You've been invited to a Smart Contract",
-                    message=f'{invitingParty.email} has invited you to be a {newPartyRole} party, \
-                    on the {smartContract.name} smart contract',
-                    from_email=settings.EMAIL_HOST_USER,
-                    recipient_list=[newParty],
+                    message=emailContent,
+                    from_email=None,
+                    recipient_list=[newParty,],
                     fail_silently=False,
                 )
                 return Response(
