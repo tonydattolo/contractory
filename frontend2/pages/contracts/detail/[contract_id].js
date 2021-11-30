@@ -1,6 +1,6 @@
 import { Spinner, Button, Alert, Card, ListGroup, Modal, Row, Col } from "react-bootstrap"
 import { useEffect, useState } from "react"
-import { useGetContractDetailsQuery } from "slices/contractsAPI"
+import { useGetContractDetailsQuery, useDeleteContractMutation } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
 
@@ -24,13 +24,28 @@ export default function ContractDetail() {
   const handleCloseDeleteConfirm = () => setShowDeleteConfirm(false)
   const handleShowDeleteConfirm = () => setShowDeleteConfirm(true)
 
+  const [
+    deleteContract, {
+      loading: deleteContractLoading,
+      error: deleteContractError,
+      isLoading: deleteContractIsLoading,
+      isError: deleteContractIsError,
+      isSuccess: deleteContractIsSuccess
+    }
+  ] = useDeleteContractMutation()
+
   const handleDeleteContract = async () => {
     try {
-      
+      await deleteContract({ contract_id, access_token })
     } catch (error) {
       console.log(error)
     }
   }
+  useEffect(() => {
+    if (deleteContractIsSuccess) {
+      router.push("/contracts", undefined, { shallow: true })
+    }
+  }, [deleteContractIsSuccess])
 
   const handleAddParty = () => {
     router.push(
@@ -40,8 +55,15 @@ export default function ContractDetail() {
     )
   }
 
+
   return (
     <>
+      {deleteContractIsError && (
+        <Alert variant="danger">
+          {deleteContractError.message}
+        </Alert>
+      )}
+
       {contractIsLoading && <Spinner animation="border" variant="primary" />}
       {contractIsError && contractError.data && <Alert variant="danger">{contractError.data.message}</Alert>}
       {contractIsSuccess && contractData && (

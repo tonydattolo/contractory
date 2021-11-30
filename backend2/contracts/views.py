@@ -124,7 +124,7 @@ class SmartContractDeleteView(APIView):
 
     def delete(self, request, id):
         try:
-            smartContract = SmartContract.objects.get(pk=id)
+            smartContract = SmartContract.objects.get(id=id)
             if smartContract.owner != request.user:
                 return Response({"message": "You are not the owner of this smart contract"}, status=status.HTTP_400_BAD_REQUEST)
             if smartContract.status == "live":
@@ -250,14 +250,47 @@ class AddPartyToSmartContractView(APIView):
                 return Response(
                     {"message": f"error sending email:{e=}"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                
-                    
-                    
-                    
-            
-            
             
         except Exception as e:
             return Response(
                 {"message": f"error adding party to smart contract:{e=}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+class AddClauseToContractView(APIView):
+    """
+    Add clause to smart contract view
+    """
+    def post(self, request, id):
+        try:
+            clause = request.data['clause']
+            clauseType = request.data['clauseType']
+            clauseDescription = request.data['clauseDescription']
+            print(f'{clause=}, {clauseType=}, {clauseDescription=}')
+            
+            if not clause or not clauseType or not clauseDescription:
+                return Response({"message": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            smartContract = SmartContract.objects.get(id=id)
+            
+            if smartContract.status == "live":
+                return Response({"message": "Cannot add a clause to a live smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            if smartContract.status == "completed":
+                return Response({"message": "Cannot add a clause to a completed smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                clause = Clause.objects.create(clause=clause, clauseType=clauseType, clauseDescription=clauseDescription, contract=smartContract)
+                clause.save()
+                smartContract.clause_set.add(clause)
+                smartContract.save()
+            except Exception as e:
+                return Response(
+                    {"message": f"error creating clause:{e=}"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+            return Response(
+                {"message": "Clause successfully added"},
+                status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {"message": f"error adding clause to smart contract:{e=}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1,6 +1,6 @@
 import Head from 'next/head'
 // import Image from 'next/image'
-import { selectAccess, selectCurrentUser, selectIsAuthenticated, selectRefresh, setUser } from 'slices/authSlice'
+import { selectAccess, selectCurrentUser, selectIsAuthenticated, selectRefresh, setAccess, setUser, setLastRefresh } from 'slices/authSlice'
 import { useSelector } from 'react-redux'
 import { ListGroup, Spinner, Badge,  } from 'react-bootstrap'
 import Link from 'next/dist/client/link'
@@ -12,25 +12,54 @@ import Post from '@/components/Post'
 
 import { useGetAllPostsQuery } from 'slices/postsAPI'
 
+import { useRefreshTokenMutation } from 'slices/authAPI'
 
 export default function Home() {
 
   const user = useSelector(selectCurrentUser)
   const isAuthenticated = useSelector(selectIsAuthenticated)
 
-  // const {
-  //   data: postsData,
-  //   error: postsError,
-  //   isLoading: postsIsLoading,
-  //   isError: postsIsError,
-  //   isFetching: postsIsFetching
-  // } = useGetAllPostsQuery('')
+  const refresh = useSelector(state => state.auth.refresh)
+  const lastRefresh = useSelector(state => state.auth.lastRefresh)
+  // calculate time since last token refresh in minutes
+  const timeSinceRefresh = (new Date().getTime() - new Date(lastRefresh).getTime()) / (1000 * 60)
 
-  // useEffect(() => {
-  //   if (postsIsError) {
-  //     console.log(postsError)
-  //   }
-  // }, [postsIsError])
+  const dispatch = useDispatch()
+
+  const [
+    refreshToken, {
+      loading: refreshLoading,
+      error: refreshError,
+      isError: refreshIsError,
+      isSuccess: refreshIsSuccess,
+      data: refreshData,
+    }
+  ] = useRefreshTokenMutation()
+
+  useEffect(() => {
+    if (refresh && timeSinceRefresh >= 60 || lastRefresh === null) {
+      handleRefreshJWT()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (refreshData) {
+      const newaccess = refreshData.access
+      console.log(`refreshData: ${JSON.stringify(refreshData)}`)
+      dispatch(setAccess(newaccess))
+    }
+  }, [refreshData])
+
+
+  const handleRefreshJWT = async () => {
+    try {
+      await refreshToken({ refresh })
+      // dispatch(setAccess(refreshData.access))
+      dispatch(setLastRefresh(Date.now()))
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
   return (

@@ -18,7 +18,7 @@ export const contractsApi = createApi({
       return headers;
     }
   }),
-  tagTypes: ["contracts"],
+  tagTypes: ["contracts", "contractDetail"],
   endpoints: (builder) => ({
     getAllContracts: builder.query({
       query: () => "",
@@ -77,9 +77,9 @@ export const contractsApi = createApi({
     }),
     deleteContract: builder.mutation({
       query(data) {
-        const { contractIDtoDelete, access_Token } = data;
+        const { contract_id, access_Token } = data;
         return {
-          url: `delete/${contractIDtoDelete}/`,
+          url: `delete/${contract_id}/`,
           headers: {
             Authorization: `JWT ${access_Token}`,
           },
