@@ -31,7 +31,8 @@ export default function Activate() {
 
   // if activation was successful, reroute to home page
   if (isSuccess) {
-    router.push('/')
+    console.alert("Activation successful!")
+    router.push('/login', undefined, { shallow: true })
   }
 
 
