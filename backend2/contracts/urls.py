@@ -7,7 +7,8 @@ from .views import (
     GetContractDetailView,
     AddPartyToSmartContractView,
     AddClauseToContractView,
-    DeleteClauseFromContractView
+    DeleteClauseFromContractView,
+    GeneratePDFPreviewView
     )
 
 urlpatterns = [
@@ -18,4 +19,5 @@ urlpatterns = [
     path('add_party/<str:id>/', AddPartyToSmartContractView.as_view(), name='add_party'),
     path('add_clause/<str:contract_id>/', AddClauseToContractView.as_view(), name='add_clause'),
     path('delete_clause/<str:contract_id>/', DeleteClauseFromContractView.as_view(), name='delete_clause'),
+    path('generate_pdf/<str:id>/', GeneratePDFPreviewView.as_view(), name='generate_pdf'),
 ]

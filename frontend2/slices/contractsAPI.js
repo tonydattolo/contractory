@@ -200,7 +200,22 @@ export const contractsApi = createApi({
       invalidatesTags: ["contractDetail"],
     }),
 
-
+    generatePDFofContract: builder.mutation({
+      query(data) {
+        const {
+          contract_id,
+          access_token,
+        } = data
+        return {
+          url: `generate_pdf/${contract_id}/`,
+          headers: {
+            Authorization: `JWT ${access_token}`,
+            "Content-Type": "application/pdf",
+          },
+          method: "GET",
+        }
+      },
+    }),
 
 
   })
@@ -217,5 +232,5 @@ export const {
   useAddClauseToContractMutation,
   useDeleteClauseFromContractMutation,
   useUpdateClausesInContractMutation,
-  
+  useGeneratePDFofContractMutation,
 } = contractsApi

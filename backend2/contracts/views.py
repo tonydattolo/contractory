@@ -331,3 +331,19 @@ class DeleteClauseFromContractView(APIView):
             return Response(
                 {"message": f"error deleting clause from smart contract:{e=}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+class GeneratePDFPreviewView(APIView):
+    """
+    Generate PDF preview for smart contract view
+    """
+    pass
+#     def get(self, request, contract_id):
+#         try:
+#             try:
+#                 smartContract = SmartContract.objects.get(id=contract_id)
+#             except SmartContract.DoesNotExist:
+#                 return Response(
+#                     {"message": "Could not find contract with that id when generating PDF preview"},
+#                     status=status.HTTP_404_NOT_FOUND)
+            
+#             if smartContract.status == "live":

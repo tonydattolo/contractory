@@ -1,6 +1,11 @@
 import { Spinner, Button, Alert, Card, ListGroup, Modal, Row, Col } from "react-bootstrap"
 import { useEffect, useState } from "react"
-import { useGetContractDetailsQuery, useDeleteContractMutation, useAddClauseToContractMutation } from "slices/contractsAPI"
+import { 
+  useGetContractDetailsQuery,
+  useDeleteContractMutation,
+  useAddClauseToContractMutation,
+  useGeneratePDFofContractMutation,
+} from "slices/contractsAPI"
 import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
 import ClauseForm from "@/components/ClauseForm/ClauseForm"
@@ -57,32 +62,29 @@ export default function ContractDetail() {
     )
   }
 
-  // const [
-  //   addClauseToContract, {
-  //     loading: addClauseToContractLoading,
-  //     error: addClauseToContractError,
-  //     isLoading: addClauseToContractIsLoading,
-  //     isError: addClauseToContractIsError,
-  //     isSuccess: addClauseToContractIsSuccess
-  //   }
-  // ] = useAddClauseToContractMutation()
 
-  const handleAddClause = async () => {
+  const [
+    generatePDFfromContract, {
+      loading: generatePDFfromContractLoading,
+      error: generatePDFfromContractError,
+      isLoading: generatePDFfromContractIsLoading,
+      isError: generatePDFfromContractIsError,
+      isSuccess: generatePDFfromContractIsSuccess
+    }
+  ] = useGeneratePDFofContractMutation()
+
+  const handleGeneratePDF = async () => {
     try {
-     await addClauseToContract({
-        contract_id,
-        access_token,
-        clause_name: "",
-        clause_description: ""
-      })
+      await generatePDFfromContract({ contract_id, access_token })
     } catch (error) {
       console.log(error)
     }
   }
 
-
   return (
     <>
+      {generatePDFfromContractIsError && <Alert variant="danger">{generatePDFfromContractError.message ?? "error generating pdf"}</Alert>}
+
       {deleteContractIsError && (
         <Alert variant="danger">
           {deleteContractError.message ?? "Error deleting contract"}
@@ -95,9 +97,22 @@ export default function ContractDetail() {
         <>
           <Card className={`mt-4`}>
             <Card.Header>
-              <h3>Contract name: {contractData.contract.name}</h3>
+              <Row>
+                <Col>
+                  <h4>Contract name: {contractData.contract.name}</h4>
+                </Col>
+                <Col>
+                  <Button
+                    variant="primary"
+                    onClick={handleGeneratePDF}
+                    disabled={generatePDFfromContractIsLoading}
+                  >
+                    Generate PDF
+                  </Button>
+                </Col>
+              </Row>
             </Card.Header>
-            <Card.Body>
+            <Card.Body style={{ marginBottom: "5px", borderBottom: "1px lightgrey solid"}}>
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   Created by: {contractData.contract.owner}
@@ -113,10 +128,11 @@ export default function ContractDetail() {
                 </ListGroup.Item>
               </ListGroup>
             </Card.Body>
+
             <Card.Header>
               <Row>
                 <Col>
-                  <h3>Contract Parties</h3>
+                  <h4>Contract Parties</h4>
                 </Col>
                 <Col>
                   <Button 
@@ -129,7 +145,7 @@ export default function ContractDetail() {
                 </Col>
               </Row>
             </Card.Header>
-            <Card.Body>
+            <Card.Body style={{ marginBottom: "5px", borderBottom: "1px lightgrey solid"}}>
               {contractData.parties.map(party => (
                 <ListGroup key={party.id} horizontal>
                   <ListGroup.Item>{party.partyEmail}</ListGroup.Item>
@@ -143,7 +159,7 @@ export default function ContractDetail() {
             <Card.Header>
               <Row>
                 <Col>
-                  <h3>Contract clauses</h3>
+                  <h4>Contract clauses</h4>
                 </Col>
                 <Col>
                   <Button
