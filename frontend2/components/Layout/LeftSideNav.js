@@ -43,7 +43,7 @@ export default function LeftSideNav() {
       </Nav.Item>
 
       <Nav.Item as="li" className={styles.sidenavItem}>
-        <Link href="/" passHref>
+        <Link href="/wallets" passHref>
           <Nav.Link href="#" className={styles.navLink}>
             <div className={styles.navIconContainer}>
               <FontAwesomeIcon icon={faWallet} />
@@ -54,7 +54,7 @@ export default function LeftSideNav() {
       </Nav.Item>
       
       <Nav.Item as="li" className={styles.sidenavItem}>
-        <Link href="/" passHref>
+        <Link href="/contracts" passHref>
           <Nav.Link href="#" className={styles.navLink}>
             <div className={styles.navIconContainer}>
               <FontAwesomeIcon icon={faFileContract} />
@@ -65,7 +65,7 @@ export default function LeftSideNav() {
       </Nav.Item>
 
       <Nav.Item as="li" className={styles.sidenavItem}>
-        <Link href="/" passHref>
+        <Link href="/contracts/new_contract" passHref>
           <Nav.Link href="#" className={styles.navLink}>
             <div className={styles.navIconContainer}>
               <FontAwesomeIcon icon={faFileSignature} />

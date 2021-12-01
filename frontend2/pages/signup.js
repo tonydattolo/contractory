@@ -1,5 +1,5 @@
-import { Form, Button, Spinner } from "react-bootstrap";
-import { useState } from "react";
+import { Form, Button, Spinner, Alert } from "react-bootstrap";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/dist/client/link";
 import { useUserCreateMutation } from "slices/authAPI";
@@ -10,7 +10,7 @@ import { selectCurrentUser } from "slices/authSlice";
 export default function Signup() {
   const user = useSelector(selectCurrentUser)
   if (user) {
-    router.push('/')
+    router.push('/', undefined, { shallow: true })
   }
   // const dispatch = useDispatch()
 
@@ -38,15 +38,18 @@ export default function Signup() {
       [e.target.name]: e.target.value
     })
   }
+  // router.push('/signuplanding', undefined, { shallow: true })
+
+  // listener for successful signup
+  useEffect(() => {
+    if (isSuccess && !isError) {
+      router.push('/signuplanding', undefined, { shallow: true })
+    }
+  }, [isSuccess, isError])
 
   const handleSignupSubmit = async () => {
     try {
       await userCreate({ email, password, re_password })
-      console.log(`isSuccess: ${isSuccess}`)
-      console.log(`isError: ${isError}`)
-      if (isError === false) {
-        router.push('/signuplanding', undefined, { shallow: true })
-      }
     } catch (error) {
       console.log(error)
       // alert('error signing up. see https://djoser.readthedocs.io/en/latest/base_endpoints.html#user-create ')
@@ -57,6 +60,8 @@ export default function Signup() {
     <div>
       <h3>Signup Page</h3>
 
+      {isLoading && <Spinner animation="border" variant="primary" />}
+      {isError && <Alert variant="danger">Error signing up.</Alert>}
       <Form>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email Address</Form.Label>

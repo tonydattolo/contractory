@@ -14,7 +14,7 @@ export const authApi = createApi({
       if (access && refresh) {
         // headers.set("authentication", `Bearer ${token}`)
         // headers.set("Authentication", `JWT ${access}`)
-        headers.set("Authentication", `Bearer ${access}`)
+        headers.set("Authorization", `JWT ${access}`)
         headers.set("Accept", "application/json")
         headers.set("Content-Type", "application/json")
       }
@@ -105,6 +105,21 @@ export const authApi = createApi({
         }
       }
     }),
+    refreshToken: builder.mutation({
+      query(data) {
+        const { refresh } = data
+        return {
+          url: 'jwt/refresh/',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'POST',
+          body: {
+            refresh: `${refresh}`
+          }
+        }
+      }
+    }),
     googleLogin: builder.query({
       // transformResponse: (response) => response.data,
       query() {
@@ -157,5 +172,6 @@ export const {
   useGoogleLoginQuery,
   useGoogleAuthMutation,
   useLoadUserQuery,
+  useRefreshTokenMutation,
 
 } = authApi

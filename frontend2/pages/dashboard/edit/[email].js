@@ -39,8 +39,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (isSuccess === true) {
-      // router.replace(`/profile/${email}`, undefined, { shallow: true})
-      router.replace(`/profile/${email}`, undefined, { shallow: true})
+      router.replace(`/dashboard/${email}`, undefined, { shallow: true})
     }
   }, [isSuccess])
 

@@ -3,9 +3,9 @@
 from django.http import request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics, status, permissions
 
 from .models import Posts
-from rest_framework import generics, status, permissions
 from .serializers import PostsSerializer
 
 from profiles.models import Profile
