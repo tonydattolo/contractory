@@ -4,7 +4,7 @@ import {
   useGetContractDetailsQuery,
   useDeleteContractMutation,
   useAddClauseToContractMutation,
-  useGeneratePDFofContractMutation,
+  useLazyGeneratePDFofContractQuery,
 } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
@@ -69,17 +69,27 @@ export default function ContractDetail() {
       error: generatePDFfromContractError,
       isLoading: generatePDFfromContractIsLoading,
       isError: generatePDFfromContractIsError,
-      isSuccess: generatePDFfromContractIsSuccess
+      isSuccess: generatePDFfromContractIsSuccess,
+      data: generatePDFfromContractData
     }
-  ] = useGeneratePDFofContractMutation()
-
+  ] = useLazyGeneratePDFofContractQuery()
+  const fileDownload = require("js-file-download")
   const handleGeneratePDF = async () => {
     try {
       await generatePDFfromContract({ contract_id, access_token })
+      console.log(`pdf data: ${generatePDFfromContractData}`)
+      fileDownload(generatePDFfromContractData.data, "file.pdf")
     } catch (error) {
       console.log(error)
     }
   }
+
+  useEffect(() => {
+    if (generatePDFfromContractIsSuccess) {
+      console.log(`pdf data: ${generatePDFfromContractData}`)
+      fileDownload(generatePDFfromContractData, "file.pdf")
+    }
+  }, [generatePDFfromContractIsSuccess])
 
   return (
     <>
@@ -106,8 +116,10 @@ export default function ContractDetail() {
                     variant="primary"
                     onClick={handleGeneratePDF}
                     disabled={generatePDFfromContractIsLoading}
+                    style={{ float: "right" }}
+                    download
                   >
-                    Generate PDF
+                    Preview PDF
                   </Button>
                 </Col>
               </Row>

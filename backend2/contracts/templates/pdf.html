@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        {% comment %} html, body {
+            font-family: sans-serif;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .clausebox {
+            border: 1px solid red;
+        } {% endcomment %}
+    </style>
+</head>
+<body>
+
+    <div>
+        <h1>Contract: {{ contract.name }}</h1>
+        <p>{{ contract.description }}</p>
+        <p>{{ contract.created_at|date:'d.m.Y' }}</p>
+        <p>{{ contract.owner }}</p>
+    </div>
+    <br>
+
+    <div>
+        <h2>Parties</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for party in parties %}
+                    <tr>
+                        {% comment %} <td>{{ party.party }}</td> {% endcomment %}
+                        <td>{{ party.role }}</td>
+                        <td>{{ party.description }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <div>
+        <h2>Clauses</h2>
+        {% for clause in clauses %}
+            {% comment %} <div class="clausebox"> {% endcomment %}
+            <div>
+                <h3>{{ clause.name }}</h3>
+                <p>{{ clause.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

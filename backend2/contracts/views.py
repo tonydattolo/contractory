@@ -1,3 +1,12 @@
+from rest_framework import response
+import pdfkit
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.template.loader import get_template
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+
+from django.core.files import File
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import authentication, generics, status, permissions
@@ -171,6 +180,9 @@ class AddPartyToSmartContractView(APIView):
     """
     Invite party to smart contract view, through an email request
     """
+    permission_classes = [permissions.IsAuthenticated,]
+    authentication_classes = [JWTAuthentication,]
+    
     def post(self, request, id):
         try:
             invitingParty = request.user
@@ -257,6 +269,9 @@ class AddClauseToContractView(APIView):
     """
     Add clause to smart contract view
     """
+    permission_classes = [permissions.IsAuthenticated,]
+    authentication_classes = [JWTAuthentication,]
+    
     def post(self, request, contract_id):
         try:
             clauseContent = request.data['clauseContent']
@@ -299,6 +314,9 @@ class DeleteClauseFromContractView(APIView):
     """
     Delete clause from smart contract view
     """
+    permission_classes = [permissions.IsAuthenticated,]
+    authentication_classes = [JWTAuthentication,]
+    
     def post(self, request, contract_id):
         try:
             clause_id = request.data['clause_id']
@@ -336,14 +354,32 @@ class GeneratePDFPreviewView(APIView):
     """
     Generate PDF preview for smart contract view
     """
-    pass
-#     def get(self, request, contract_id):
-#         try:
-#             try:
-#                 smartContract = SmartContract.objects.get(id=contract_id)
-#             except SmartContract.DoesNotExist:
-#                 return Response(
-#                     {"message": "Could not find contract with that id when generating PDF preview"},
-#                     status=status.HTTP_404_NOT_FOUND)
+    permission_classes = [permissions.IsAuthenticated,]
+    authentication_classes = [JWTAuthentication,]
+
+    def get(self, request, contract_id):
+        try:
+            contract = SmartContract.objects.get(id=contract_id)
+            parties = contract.party_set.all()
+            clauses = contract.clause_set.all()
             
-#             if smartContract.status == "live":
+            template = get_template('pdf.html')
+            html = template.render({
+                'contract': contract,
+                'parties': parties,
+                'clauses': clauses,
+            })
+            pdf = pdfkit.from_string(html, False, options={})
+            
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="contract.pdf"'
+            # response['Content-Disposition'] = 'attachment'
+            # response['Content-Disposition'] = 'inline'
+            
+            return response
+        except Exception as e:
+            print(f'{e=}')
+            return Response(
+                {"message": f"error generating pdf preview:{e=}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
