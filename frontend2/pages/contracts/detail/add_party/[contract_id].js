@@ -76,6 +76,8 @@ export default function AddPartyToContract() {
         <Spinner animation="border" role="status" variant="warning" />
       )}
 
+      <h5>Add party to contract: {contract_id}</h5>
+
       <Form className="mt-4">
         <Form.Group className="mb-3" controlId="addPartyEmail">
           <Form.Label>Enter new party email:</Form.Label>

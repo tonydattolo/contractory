@@ -1,8 +1,10 @@
 import { Spinner, Button, Alert, Card, ListGroup, Modal, Row, Col } from "react-bootstrap"
 import { useEffect, useState } from "react"
-import { useGetContractDetailsQuery, useDeleteContractMutation } from "slices/contractsAPI"
+import { useGetContractDetailsQuery, useDeleteContractMutation, useAddClauseToContractMutation } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
+import ClauseForm from "@/components/ClauseForm/ClauseForm"
+import ClauseListItem from "@/components/Contracts/ClauseListItem"
 
 export default function ContractDetail() {
 
@@ -55,12 +57,35 @@ export default function ContractDetail() {
     )
   }
 
+  // const [
+  //   addClauseToContract, {
+  //     loading: addClauseToContractLoading,
+  //     error: addClauseToContractError,
+  //     isLoading: addClauseToContractIsLoading,
+  //     isError: addClauseToContractIsError,
+  //     isSuccess: addClauseToContractIsSuccess
+  //   }
+  // ] = useAddClauseToContractMutation()
+
+  const handleAddClause = async () => {
+    try {
+     await addClauseToContract({
+        contract_id,
+        access_token,
+        clause_name: "",
+        clause_description: ""
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   return (
     <>
       {deleteContractIsError && (
         <Alert variant="danger">
-          {deleteContractError.message}
+          {deleteContractError.message ?? "Error deleting contract"}
         </Alert>
       )}
 
@@ -114,20 +139,44 @@ export default function ContractDetail() {
                 </ListGroup>
               ))}
             </Card.Body>
+
             <Card.Header>
-              <h3>Contract clauses</h3>
+              <Row>
+                <Col>
+                  <h3>Contract clauses</h3>
+                </Col>
+                <Col>
+                  <Button
+                    variant="primary"
+                    style={{ float: "right", }}
+                    onClick={() => {
+                      router.push(`/contracts/detail/add_clause/${contract_id}`, undefined, { shallow: true })
+                    }}
+                  >
+                    Add Clause
+                  </Button>
+                </Col>
+              </Row>
             </Card.Header>
             <Card.Body>
-              {contractData.clauses.length === 0 && ( 
+              {contractIsSuccess && contractData.clauses.length === 0 && (
                 <Alert variant="info">No clauses found</Alert>
               )}
+
+              {/* without formik */}
               {contractData.clauses.map(clause => (
-                <ListGroup key={clause.id}>
-                  <ListGroup.Item>
-                    {clause.description}
-                  </ListGroup.Item>
-                </ListGroup>
+                <ClauseListItem key={clause.id} clause={clause} contract_id={contract_id} />
+                // <ListGroup key={clause.id}>
+                //   <ListGroup.Item>
+                //     {clause.content}
+                //   </ListGroup.Item>
+                // </ListGroup>
               ))}
+              
+              {/* with formik */}
+              {/* {contractIsSuccess && contractData && (
+                <ClauseForm contract={contractData.contract.id} clauses={contractData.clauses} />
+              )} */}
 
             </Card.Body>
           </Card>
@@ -155,6 +204,9 @@ export default function ContractDetail() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+
+
 
     </>
   )

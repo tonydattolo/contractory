@@ -221,7 +221,6 @@ class AddPartyToSmartContractView(APIView):
                     {"message": "This person is already a party on this contract"},
                     status=status.HTTP_400_BAD_REQUEST)
                 
-            
             try:
                 user = USER.objects.get(email=newParty)
                 party = Party.objects.create(party=user, role=newPartyRole, contract=smartContract)
@@ -232,10 +231,8 @@ class AddPartyToSmartContractView(APIView):
                 return Response(
                     {"message": f"error creating party:{e=}"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                
             
             try:
-                
                 send_mail(
                     subject="You've been invited to a Smart Contract",
                     message=emailContent,
@@ -260,17 +257,20 @@ class AddClauseToContractView(APIView):
     """
     Add clause to smart contract view
     """
-    def post(self, request, id):
+    def post(self, request, contract_id):
         try:
-            clause = request.data['clause']
-            clauseType = request.data['clauseType']
-            clauseDescription = request.data['clauseDescription']
-            print(f'{clause=}, {clauseType=}, {clauseDescription=}')
+            clauseContent = request.data['clauseContent']
+            print(f'{clauseContent=}')
             
-            if not clause or not clauseType or not clauseDescription:
+            if not clauseContent:
                 return Response({"message": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
             
-            smartContract = SmartContract.objects.get(id=id)
+            try:
+                smartContract = SmartContract.objects.get(id=contract_id)
+            except SmartContract.DoesNotExist:
+                return Response(
+                    {"message": "Could not find contract with that id when adding clause"},
+                    status=status.HTTP_404_NOT_FOUND)
             
             if smartContract.status == "live":
                 return Response({"message": "Cannot add a clause to a live smart contract"}, status=status.HTTP_400_BAD_REQUEST)
@@ -278,7 +278,7 @@ class AddClauseToContractView(APIView):
                 return Response({"message": "Cannot add a clause to a completed smart contract"}, status=status.HTTP_400_BAD_REQUEST)
             
             try:
-                clause = Clause.objects.create(clause=clause, clauseType=clauseType, clauseDescription=clauseDescription, contract=smartContract)
+                clause = Clause.objects.create(content=clauseContent, contract=smartContract)
                 clause.save()
                 smartContract.clause_set.add(clause)
                 smartContract.save()
@@ -293,4 +293,41 @@ class AddClauseToContractView(APIView):
         except Exception as e:
             return Response(
                 {"message": f"error adding clause to smart contract:{e=}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+class DeleteClauseFromContractView(APIView):
+    """
+    Delete clause from smart contract view
+    """
+    def post(self, request, contract_id):
+        try:
+            clause_id = request.data['clause_id']
+            print(f'{clause_id=}')
+            
+            if not clause_id:
+                return Response({"message": "Missing fields: clause_id"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                smartContract = SmartContract.objects.get(id=contract_id)
+            except SmartContract.DoesNotExist:
+                return Response(
+                    {"message": "Could not find contract with that id when deleting clause"},
+                    status=status.HTTP_404_NOT_FOUND)
+            
+            if smartContract.status == "live":
+                return Response({"message": "Cannot delete a clause from a live smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            if smartContract.status == "completed":
+                return Response({"message": "Cannot delete a clause from a completed smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                clause = Clause.objects.get(id=clause_id, contract=smartContract)
+                clause.delete()
+            except Exception as e:
+                return Response(
+                    {"message": f"error deleting clause:{e=}"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+        except Exception as e:
+            return Response(
+                {"message": f"error deleting clause from smart contract:{e=}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)

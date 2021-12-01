@@ -11,7 +11,7 @@ const slice = createSlice({
     lastRefresh: null,
   },
   reducers: {
-    setToken: (state, {payload: { access, refresh }}) => {
+    setToken: (state, { payload: { access, refresh }}) => {
       state.access = access
       state.refresh = refresh
       state.isAuthenticated = true
@@ -34,7 +34,7 @@ const slice = createSlice({
     setAccess: (state, { payload: { access } }) => {
       state.access = access
     },
-    setLastRefresh: (state, {payload: { lastRefresh }}) => {
+    setLastRefresh: (state, { payload: { lastRefresh }}) => {
       state.lastRefresh = lastRefresh
     }
   },

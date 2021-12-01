@@ -114,6 +114,93 @@ export const contractsApi = createApi({
       invalidatesTags: ["contractDetail"],
     }),
 
+    removePartyFromContract: builder.mutation({
+      query(data) {
+        const {
+          contract_id,
+          access_token,
+          party_id,
+          party_role,
+        } = data
+        return {
+          url: `remove_party/${contract_id}/`,
+          headers: {
+            Authorization: `JWT ${access_token}`,
+          },
+          method: "POST",
+          body: {
+            party_id: `${party_id}`,
+            party_role: `${party_role}`,
+          },
+        }
+      },
+      invalidatesTags: ["contractDetail"],
+    }),
+
+    addClauseToContract: builder.mutation({
+      query(data) {
+        const {
+          contract_id,
+          access_token,
+          clauseContent,
+        } = data
+        return {
+          url: `add_clause/${contract_id}/`,
+          headers: {
+            Authorization: `JWT ${access_token}`,
+          },
+          method: "POST",
+          body: {
+            clauseContent: `${clauseContent}`,
+          },
+        }
+      },
+      invalidatesTags: ["contractDetail"],
+    }),
+
+    deleteClauseFromContract: builder.mutation({
+      query(data) {
+        const {
+          contract_id,
+          access_token,
+          clause_id,
+        } = data
+        return {
+          url: `delete_clause/${contract_id}/`,
+          headers: {
+            Authorization: `JWT ${access_token}`,
+          },
+          method: "POST",
+          body: {
+            clause_id: `${clause_id}`,
+          },
+        }
+      },
+      invalidatesTags: ["contractDetail"],
+    }),
+
+    updateClausesInContract: builder.mutation({
+      query(data) {
+        const {
+          contract_id,
+          access_token,
+          clauses,
+        } = data
+        return {
+          url: `update_clauses/${contract_id}/`,
+          headers: {
+            Authorization: `JWT ${access_token}`,
+          },
+          method: "POST",
+          body: {
+            clauses: `${clauses}`,
+          },
+        }
+      },
+      invalidatesTags: ["contractDetail"],
+    }),
+
+
 
 
   })
@@ -126,5 +213,9 @@ export const {
   useDeleteContractMutation,
   useGetContractDetailsQuery,
   useAddPartyToContractMutation,
-  // useLazyGetContractsByUserQuery
+  useRemovePartyFromContractMutation,
+  useAddClauseToContractMutation,
+  useDeleteClauseFromContractMutation,
+  useUpdateClausesInContractMutation,
+  
 } = contractsApi

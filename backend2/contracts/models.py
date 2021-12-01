@@ -98,9 +98,12 @@ class Clause(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     contract = models.ForeignKey(SmartContract, on_delete=CASCADE)
-    content = models.TextField(blank=True)
+    content = models.TextField(blank=True, default="placeholder for clause content")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # field that holds a randomly assigned default color for the clause
+    # color = models.CharField(max_length=7, default="#000000")
 
     # amount = models.IntegerField(default=0)
     # sender = models.ForeignKey(Party, on_delete=CASCADE, related_name='sender')
