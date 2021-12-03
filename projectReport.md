@@ -42,6 +42,8 @@ Prototype MVP for a No-Code Web3 Smart Contract as a Service Platform on Ethereu
 ## Backend
   - Django Rest Framework, PostgreSQL, Ethereum
   - For the backend, I chose Django Rest Framework and PostgreSQL. Django is a very robust, full featured framework. It is well documented, there is a lot of built-in functionality and support for common use cases. It's also opinionated enough to allow for total control and customization. As such, Django and in this case the REST implementation, Django Rest Framework, allow for rapidly developing minimum viable products, prototypes, testing out features. The structure breaks features into seperate apps within the project and can even hold multiple sites within the project. This aligns really well with an agile iterative development workflow. New sprint, new app started within the project, new feature branch for it, and suddenly the code is very modular and extensible without stepping on the toes of other parts of the codebase, or even entire sites that other teams may we working on.
+  - API documentation: swagger/redoc
+  - built in admin panel for viewing whats happening without needing to query the database manually
 
 ## Frontend
   - NodeJS, NextJS, useDapp, Redux, RTK, Redux-Persist, RTK-Query, ethers, React-Bootstrap, Scss
