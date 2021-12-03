@@ -1,6 +1,6 @@
 from rest_framework import response
 import pdfkit
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -208,6 +208,13 @@ class AddPartyToSmartContractView(APIView):
                 emailContent = f"{invitingParty.email} has invited you to be a {newPartyRole} party, \
                     on the {smartContract.name} smart contract. \n However, you have not signed up yet. \
                     To signup, please visit {f'localhost:3000/signup'} \n \n \ "
+                send_mail(
+                    subject="You've been invited to a Smart Contract",
+                    message=emailContent,
+                    from_email=None,
+                    recipient_list=[newParty,],
+                    fail_silently=False,
+                )
                 return Response(
                     {"message": "This person is not signed up"},
                     status=status.HTTP_404_NOT_FOUND)
@@ -363,19 +370,23 @@ class GeneratePDFPreviewView(APIView):
             parties = contract.party_set.all()
             clauses = contract.clause_set.all()
             
-            template = get_template('pdf.html')
+            template = get_template('contract.html')
             html = template.render({
                 'contract': contract,
                 'parties': parties,
                 'clauses': clauses,
             })
-            pdf = pdfkit.from_string(html, False, options={})
+            pdf = pdfkit.from_string(html, False, options={
+                'page-size': 'Letter',
+                'encoding': "UTF-8",
+            })
             
-            response = HttpResponse(pdf, content_type='application/pdf')
+            response = Response(pdf, content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="contract.pdf"'
             # response['Content-Disposition'] = 'attachment'
             # response['Content-Disposition'] = 'inline'
             
+            # response = FileResponse(pdf, as_attachment=True, filename=f'{contract.name}.pdf')
             return response
         except Exception as e:
             print(f'{e=}')

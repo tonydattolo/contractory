@@ -64,7 +64,7 @@ export default function AddPartyToContract() {
 
       {addPartyIsError && (
         <Alert variant="danger">
-          {addPartyError.data.message}
+          {/* {addPartyError.data.message ?? "error loading error"} */}
         </Alert>
       )}
       {addPartyIsSuccess && (

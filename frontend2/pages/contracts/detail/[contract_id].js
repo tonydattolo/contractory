@@ -78,7 +78,7 @@ export default function ContractDetail() {
     try {
       await generatePDFfromContract({ contract_id, access_token })
       console.log(`pdf data: ${generatePDFfromContractData}`)
-      fileDownload(generatePDFfromContractData.data, "file.pdf")
+      fileDownload(generatePDFfromContractData, "file.pdf")
     } catch (error) {
       console.log(error)
     }
