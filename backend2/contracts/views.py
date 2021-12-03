@@ -381,7 +381,7 @@ class GeneratePDFPreviewView(APIView):
                 'encoding': "UTF-8",
             })
             
-            response = Response(pdf, content_type='application/pdf')
+            response = HttpResponse(pdf, content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="contract.pdf"'
             # response['Content-Disposition'] = 'attachment'
             # response['Content-Disposition'] = 'inline'
