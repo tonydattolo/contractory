@@ -45,6 +45,9 @@ Prototype MVP for a No-Code Web3 Smart Contract as a Service Platform on Ethereu
 
 ## Frontend
   - NodeJS, NextJS, useDapp, Redux, RTK, Redux-Persist, RTK-Query, ethers, React-Bootstrap, Scss
+  - NextJS: image optimization, SSR if wanted, faster, offers more long term extensibility
+  - react-bootstrap: for quick prototyping, react optimized components
+  - scss modules: separation of concerns and modularity.
   
 ## Blockchain
   - Ethereum, Solidity, useDapp, ethersJS, quicknode
