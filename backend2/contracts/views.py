@@ -5,6 +5,11 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
+# reportlab attemp
+from io import BytesIO
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+
 from django.core.files import File
 
 from rest_framework.response import Response
@@ -393,4 +398,3 @@ class GeneratePDFPreviewView(APIView):
             return Response(
                 {"message": f"error generating pdf preview:{e=}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            

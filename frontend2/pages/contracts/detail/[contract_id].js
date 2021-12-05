@@ -11,6 +11,9 @@ import { useRouter } from "next/router"
 import ClauseForm from "@/components/ClauseForm/ClauseForm"
 import ClauseListItem from "@/components/Contracts/ClauseListItem"
 
+
+import axios from "axios"
+
 export default function ContractDetail() {
 
   const router = useRouter()
@@ -62,38 +65,10 @@ export default function ContractDetail() {
     )
   }
 
-
-  const [
-    generatePDFfromContract, {
-      loading: generatePDFfromContractLoading,
-      error: generatePDFfromContractError,
-      isLoading: generatePDFfromContractIsLoading,
-      isError: generatePDFfromContractIsError,
-      isSuccess: generatePDFfromContractIsSuccess,
-      data: generatePDFfromContractData
-    }
-  ] = useLazyGeneratePDFofContractQuery()
   const fileDownload = require("js-file-download")
-  const handleGeneratePDF = async () => {
-    try {
-      await generatePDFfromContract({ contract_id, access_token })
-      console.log(`pdf data: ${generatePDFfromContractData}`)
-      fileDownload(generatePDFfromContractData, "file.pdf")
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    if (generatePDFfromContractIsSuccess) {
-      console.log(`pdf data: ${generatePDFfromContractData}`)
-      fileDownload(generatePDFfromContractData, "file.pdf")
-    }
-  }, [generatePDFfromContractIsSuccess])
 
   return (
     <>
-      {generatePDFfromContractIsError && <Alert variant="danger">{generatePDFfromContractError.message ?? "error generating pdf"}</Alert>}
 
       {deleteContractIsError && (
         <Alert variant="danger">
@@ -114,10 +89,22 @@ export default function ContractDetail() {
                 <Col>
                   <Button
                     variant="primary"
-                    onClick={handleGeneratePDF}
-                    disabled={generatePDFfromContractIsLoading}
+                    // onClick={handleGeneratePDF}
+                    onClick={() => {
+                      axios.get(`http://localhost:8000/contracts/generate_pdf/${contract_id}/`, {
+                        headers: {
+                          Authorization: `JWT ${access_token}`,
+                        },
+                        responseType: "blob",
+                      }).then((response) => {
+                        fileDownload(response.data, `${contractData.contract.id}.pdf`)
+                      }).catch((error) => {
+                        console.log(error)
+                      })
+                    }}
+
                     style={{ float: "right" }}
-                    download
+                    // download
                   >
                     Preview PDF
                   </Button>

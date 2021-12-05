@@ -19,6 +19,7 @@ ethereum = "*"
 eth-utils = "*"
 django-wkhtmltopdf = "*"
 django-pdfkit = "*"
+reportlab = "*"
 
 [dev-packages]
 

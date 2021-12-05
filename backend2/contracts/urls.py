@@ -8,7 +8,7 @@ from .views import (
     AddPartyToSmartContractView,
     AddClauseToContractView,
     DeleteClauseFromContractView,
-    GeneratePDFPreviewView
+    GeneratePDFPreviewView,
     )
 
 urlpatterns = [
