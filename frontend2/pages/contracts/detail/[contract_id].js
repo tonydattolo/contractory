@@ -121,12 +121,14 @@ export default function ContractDetail() {
                     variant="warning"
                     onClick={handleGenerateFile}
                     disabled={generateFileIsLoading}
+                    style={{ float: "right" }}
                   >
                     {generateFileIsLoading ? "Generating..." : "Launch"}
                   </Button>
                   <Button
-                    variant="primary"
+                    variant="secondary"
                     // onClick={handleGeneratePDF}
+
                     onClick={() => {
                       axios.get(`http://localhost:8000/contracts/generate_pdf/${contract_id}/`, {
                         headers: {

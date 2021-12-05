@@ -455,7 +455,7 @@ class GenerateContractFile(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         try:
-            with open(f'{contract.id}-{contract.status}.sol', 'w') as f:
+            with open(f'contracts/launchedContracts/{contract.id}-{contract.status}.sol', 'w') as f:
                 newContract = File(f)
                 newContract.write(f'pragma solidity ^0.5.0;\n\n')
                 newContract.write(f'contract name: {contract.name} \n \
