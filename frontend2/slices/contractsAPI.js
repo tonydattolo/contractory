@@ -5,14 +5,6 @@ export const contractsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:8000/contracts/",
     prepareHeaders: (headers, { getState }) => {
-      // const access = getState().auth.access
-      // if (access) {
-      // headers.set("Authentication", `Bearer ${access}`)
-      //   // headers.set("Authentication", `JWT ${access}`)
-      //   headers.set("Authentication", `Bearer ${access}`)
-      //   headers.set("Accept", "application/json")
-      //   headers.set("Content-Type", "application/json")
-      // }
       headers.set("Accept", "application/json");
       headers.set("Content-Type", "application/json");
       return headers;
@@ -29,14 +21,9 @@ export const contractsApi = createApi({
         const { email, access_token } = data
         return {
           url: `list/${email}/draft/`,
-          // params: {
-          //   email,
-          //   type
-          // },
           headers: {
             "Authorization": `JWT ${access_token}`,
           },
-
         }
       },
     }),
@@ -200,7 +187,7 @@ export const contractsApi = createApi({
       invalidatesTags: ["contractDetail"],
     }),
 
-    generatePDFofContract: builder.mutation({
+    generatePDFofContract: builder.query({
       query(data) {
         const {
           contract_id,
@@ -211,8 +198,11 @@ export const contractsApi = createApi({
           headers: {
             Authorization: `JWT ${access_token}`,
             "Content-Type": "application/pdf",
+            "Accept": "application/pdf",
+            // "Content-Type": "application/octet-stream"
           },
           method: "GET",
+          responseType: "blob",
         }
       },
     }),
@@ -232,5 +222,5 @@ export const {
   useAddClauseToContractMutation,
   useDeleteClauseFromContractMutation,
   useUpdateClausesInContractMutation,
-  useGeneratePDFofContractMutation,
+  useLazyGeneratePDFofContractQuery,
 } = contractsApi

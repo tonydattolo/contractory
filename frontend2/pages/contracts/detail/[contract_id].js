@@ -4,12 +4,15 @@ import {
   useGetContractDetailsQuery,
   useDeleteContractMutation,
   useAddClauseToContractMutation,
-  useGeneratePDFofContractMutation,
+  useLazyGeneratePDFofContractQuery,
 } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
 import ClauseForm from "@/components/ClauseForm/ClauseForm"
 import ClauseListItem from "@/components/Contracts/ClauseListItem"
+
+
+import axios from "axios"
 
 export default function ContractDetail() {
 
@@ -62,28 +65,10 @@ export default function ContractDetail() {
     )
   }
 
-
-  const [
-    generatePDFfromContract, {
-      loading: generatePDFfromContractLoading,
-      error: generatePDFfromContractError,
-      isLoading: generatePDFfromContractIsLoading,
-      isError: generatePDFfromContractIsError,
-      isSuccess: generatePDFfromContractIsSuccess
-    }
-  ] = useGeneratePDFofContractMutation()
-
-  const handleGeneratePDF = async () => {
-    try {
-      await generatePDFfromContract({ contract_id, access_token })
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const fileDownload = require("js-file-download")
 
   return (
     <>
-      {generatePDFfromContractIsError && <Alert variant="danger">{generatePDFfromContractError.message ?? "error generating pdf"}</Alert>}
 
       {deleteContractIsError && (
         <Alert variant="danger">
@@ -104,10 +89,24 @@ export default function ContractDetail() {
                 <Col>
                   <Button
                     variant="primary"
-                    onClick={handleGeneratePDF}
-                    disabled={generatePDFfromContractIsLoading}
+                    // onClick={handleGeneratePDF}
+                    onClick={() => {
+                      axios.get(`http://localhost:8000/contracts/generate_pdf/${contract_id}/`, {
+                        headers: {
+                          Authorization: `JWT ${access_token}`,
+                        },
+                        responseType: "blob",
+                      }).then((response) => {
+                        fileDownload(response.data, `${contractData.contract.id}.pdf`)
+                      }).catch((error) => {
+                        console.log(error)
+                      })
+                    }}
+
+                    style={{ float: "right" }}
+                    // download
                   >
-                    Generate PDF
+                    Preview PDF
                   </Button>
                 </Col>
               </Row>

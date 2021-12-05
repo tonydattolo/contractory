@@ -17,6 +17,9 @@ autopep8 = "*"
 drf-yasg = "*"
 ethereum = "*"
 eth-utils = "*"
+django-wkhtmltopdf = "*"
+django-pdfkit = "*"
+reportlab = "*"
 
 [dev-packages]
 
