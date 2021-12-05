@@ -1,10 +1,15 @@
-import { ListGroup, Button, Alert, Row, Col } from "react-bootstrap"
+import { ListGroup, Modal, Button, Alert, Row, Col } from "react-bootstrap"
 import { useDeleteClauseFromContractMutation } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
+import { useState } from "react"
 
 export default function ClauseListItem({ clause, contract_id }) {
 
   const access_token = useSelector(state => state.auth.access)
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const handleCloseDeleteConfirm = () => setShowDeleteConfirm(false)
+  const handleShowDeleteConfirm = () => setShowDeleteConfirm(true)
 
   const [
     deleteClauseFromContract, {
@@ -31,7 +36,7 @@ export default function ClauseListItem({ clause, contract_id }) {
           <Col>
             <Button
               variant="danger"
-              onClick={handleDeleteClause}
+              onClick={handleShowDeleteConfirm}
               disabled={deleteClauseFromContractLoading}
               style={{ float: "right" }}
             >
@@ -43,6 +48,23 @@ export default function ClauseListItem({ clause, contract_id }) {
           {clause.content}
         </ListGroup.Item>
       </ListGroup>
+
+      <Modal show={showDeleteConfirm} onHide={handleCloseDeleteConfirm}>
+        <Modal.Header>
+          <Modal.Title>Delete contract</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this contract?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDeleteConfirm}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={handleDeleteClause}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   )
 }

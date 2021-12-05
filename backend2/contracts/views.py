@@ -277,6 +277,31 @@ class AddPartyToSmartContractView(APIView):
                 {"message": f"error adding party to smart contract:{e=}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
+class DeletePartyFromSmartContractView(APIView):
+    """
+    Delete party from smart contract view
+    """
+    permission_classes = [permissions.IsAuthenticated,]
+    authentication_classes = [JWTAuthentication,]
+    
+    def post(self, request, contract_id):
+        try:
+            party_id = request.data['party_id']
+            smartContract = SmartContract.objects.get(id=contract_id)
+            party = Party.objects.get(id=party_id, contract=smartContract)
+            
+            if smartContract.status == "live" or smartContract.status == "completed":
+                return Response({"message": "Cannot delete a party from a live or completed smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            party.delete()
+            return Response(
+                {"message": "Party deleted successfully"},
+                status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {"message": f"error deleting party from smart contract:{e=}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
 class AddClauseToContractView(APIView):
     """
     Add clause to smart contract view
@@ -352,6 +377,9 @@ class DeleteClauseFromContractView(APIView):
             try:
                 clause = Clause.objects.get(id=clause_id, contract=smartContract)
                 clause.delete()
+                return Response(
+                    {"message": "Clause successfully deleted"},
+                    status=status.HTTP_200_OK)
             except Exception as e:
                 return Response(
                     {"message": f"error deleting clause:{e=}"},
@@ -398,3 +426,58 @@ class GeneratePDFPreviewView(APIView):
             return Response(
                 {"message": f"error generating pdf preview:{e=}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GenerateContractFile(APIView):
+    """
+    Generate the solidity smart contract using the contract information
+    """
+    
+    permission_classes = [permissions.IsAuthenticated,]
+    authentication_classes = [JWTAuthentication,]
+    
+    def post(self, request, contract_id):
+        try:
+            contract = SmartContract.objects.get(id=contract_id)
+            
+            # if contract.status == "pending":
+            #     return Response({"message": "Cannot generate contract file for a pending smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            # if contract.status == "live":
+            #     return Response({"message": "Cannot generate a contract file for a live smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            # if contract.status == "completed":
+            #     return Response({"message": "Cannot generate a contract file for a completed smart contract"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            parties = contract.party_set.all()
+            clauses = contract.clause_set.all()
+        except Exception as e:
+            print(f'{e=}')
+            return Response(
+                {"message": f"error getting contract:{e=}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        try:
+            with open(f'{contract.id}-{contract.status}.sol', 'w') as f:
+                newContract = File(f)
+                newContract.write(f'pragma solidity ^0.5.0;\n\n')
+                newContract.write(f'contract name: {contract.name} \n \
+                                    description: {contract.description} \n \
+                                    id: {contract.id} \n \
+                                    ')
+                for party in parties:
+                    newContract.write(f'\n\n\nparty: {party.party} \n \
+                                        description: {party.description} \n \
+                                        name: {party.name} \n ')
+                for clause in clauses:
+                    newContract.write(f'\n\n\nclause: {clause.id} \n \
+                                        content: {clause.content} \n ')
+                newContract.close()
+
+            return Response(
+                {"message": "Contract file successfully generated"},
+                status=status.HTTP_200_OK)
+            # f.close()
+        except Exception as e:
+            print(f'{e=}')
+            return Response(
+                {"message": f"error writing contract file:{e=}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
