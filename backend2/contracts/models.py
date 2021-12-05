@@ -1,11 +1,18 @@
 from django.db import models
 from uuid import uuid4
-# Create your models here.
-from django.contrib.auth import get_user_model
 from django.db.models.deletion import CASCADE
 from wallets.validators import ethereumAddressValidator
 
+from django.conf import settings
+# from .storages import MyLocalStorage, MyRemoteStorage, MyS3Storage
+# def select_storage():
+#     return MyLocalStorage() if settings.DEBUG else MyRemoteStorage()
+    
+
+from django.contrib.auth import get_user_model
 USER = get_user_model()
+
+
 
 class SmartContract(models.Model):
     """
