@@ -51,10 +51,15 @@ export default function ClauseListItem({ clause, contract_id }) {
 
       <Modal show={showDeleteConfirm} onHide={handleCloseDeleteConfirm}>
         <Modal.Header>
-          <Modal.Title>Delete contract</Modal.Title>
+          <Modal.Title>Delete clause</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this contract?
+          Are you sure you want to delete this clause?
+          <br />
+          <br />
+          <p style={{ color: "grey", fontStyle: "italic", }}>
+            {clause.content}
+          </p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseDeleteConfirm}>

@@ -58,6 +58,7 @@ export default function PartyListItem({ party, contract_id }) {
         <Modal.Body>
           Are you sure you want to delete this party?
           <br />
+          <br />
           {party.partyEmail}
         </Modal.Body>
         <Modal.Footer>
