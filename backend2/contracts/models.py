@@ -114,6 +114,7 @@ class Clause(models.Model):
     #     ('time', 'time'),
     # ]
     # trigger = models.CharField(choices=trigger_choices, default='manual', max_length=20)
+    # trigger_link = models.CharField(max_length=100, blank=True)
     # trigger_at = models.DateTimeField(blank=True, null=True)
     # status_choices = [
     #     ('pending', 'pending'),

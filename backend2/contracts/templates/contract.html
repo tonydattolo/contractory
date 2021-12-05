@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    {% comment %} <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> {% endcomment %}
+    <title>Document</title>
+    <style>
+        html, body {
+            font-family: sans-serif;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .clausebox {
+            border: 1px solid red;
+        }
+
+        #partyStyle {
+            font-family: sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #partyStyle td, #partyStyle th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #partyStyle tr:nth-child(even){background-color: #f2f2f2;}
+        #partyStyle tr:hover {background-color: #ddd;}
+        #partyStyle th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #5923d9;
+            color: white;
+        }
+
+        #contractStyle {
+            font-family: sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #contractStyle td, #contractStyle th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #contractStyle tr:nth-child(even){background-color: #f2f2f2;}
+        #contractStyle th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #5923d9;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="contractStyle">
+        <h1>Contract</h1>
+        <p>Name: {{ contract.name }}</p>
+        <p>Description: {{ contract.description }}</p>
+        <p>Created At: {{ contract.created_at|date:'d/m/Y' }}</p>
+        <p>Created By: {{ contract.owner }}</p>
+    </div>
+    <br>
+
+    <div>
+        <h2>Parties</h2>
+        <table id="partyStyle">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for party in parties %}
+                    <tr>
+                        <td>{{ party.party }}</td>
+                        <td>{{ party.role }}</td>
+                        <td>{{ party.description }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <div>
+        <h2>Clauses</h2>
+        <table id="contractStyle">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>content</th>
+                    <th>Created at</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for clause in clauses %}
+                    <tr>
+                        <td>{{ clause.id }}</td>
+                        <td>{{ clause.content }}</td>
+                        <td>{{ clause.created_at|date:'d.m.Y' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% comment %} <div class="clausebox">
+                <h5>{{ clause.id }}</h3>
+                <p>{{ clause.content }}</p>
+            </div> {% endcomment %}
+    </div>
+
+</body>
+</html>
