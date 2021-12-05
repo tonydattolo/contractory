@@ -101,23 +101,21 @@ export const contractsApi = createApi({
       invalidatesTags: ["contractDetail"],
     }),
 
-    removePartyFromContract: builder.mutation({
+    deletePartyFromContract: builder.mutation({
       query(data) {
         const {
-          contract_id,
           access_token,
           party_id,
-          party_role,
+          contract_id,
         } = data
         return {
-          url: `remove_party/${contract_id}/`,
+          url: `delete_party/${contract_id}/`,
           headers: {
             Authorization: `JWT ${access_token}`,
           },
           method: "POST",
           body: {
             party_id: `${party_id}`,
-            party_role: `${party_role}`,
           },
         }
       },
@@ -207,6 +205,26 @@ export const contractsApi = createApi({
       },
     }),
 
+    generateFileOfContract: builder.mutation({
+      query(data) {
+        const {
+          contract_id,
+          access_token,
+        } = data
+        return {
+          url: `generate_file/${contract_id}/`,
+          headers: {
+            Authorization: `JWT ${access_token}`,
+            "Content-Type": "application/octet-stream",
+          },
+          method: "POST",
+        }
+      },
+      invalidatesTags: ["contractDetail"],
+    }),
+
+
+
 
   })
 })
@@ -218,9 +236,10 @@ export const {
   useDeleteContractMutation,
   useGetContractDetailsQuery,
   useAddPartyToContractMutation,
-  useRemovePartyFromContractMutation,
+  useDeletePartyFromContractMutation,
   useAddClauseToContractMutation,
   useDeleteClauseFromContractMutation,
   useUpdateClausesInContractMutation,
   useLazyGeneratePDFofContractQuery,
+  useGenerateFileOfContractMutation,
 } = contractsApi

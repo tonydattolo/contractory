@@ -5,12 +5,13 @@ import {
   useDeleteContractMutation,
   useAddClauseToContractMutation,
   useLazyGeneratePDFofContractQuery,
+  useGenerateFileOfContractMutation
 } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
 import ClauseForm from "@/components/ClauseForm/ClauseForm"
 import ClauseListItem from "@/components/Contracts/ClauseListItem"
-
+import PartyListItem from "@/components/Contracts/PartyListItem"
 
 import axios from "axios"
 
@@ -57,6 +58,7 @@ export default function ContractDetail() {
     }
   }, [deleteContractIsSuccess])
 
+
   const handleAddParty = () => {
     router.push(
       `/contracts/detail/add_party/${contract_id}`,
@@ -67,8 +69,36 @@ export default function ContractDetail() {
 
   const fileDownload = require("js-file-download")
 
+  const [
+    generateFileOfContract, {
+      loading: generateFileLoading,
+      error: generateFileError,
+      isLoading: generateFileIsLoading,
+      isError: generateFileIsError,
+      isSuccess: generateFileIsSuccess
+    }
+  ] = useGenerateFileOfContractMutation()
+
+  const handleGenerateFile = async () => {
+    try {
+      await generateFileOfContract({ contract_id, access_token })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <>
+
+      {generateFileIsSuccess && (
+        <Alert variant="success">
+          <Alert.Heading>Success!</Alert.Heading>
+          <p>
+            The file has been generated.
+          </p>
+        </Alert>
+      )}
+      {generateFileIsError && <Alert variant="danger">{generateFileError.data.message}</Alert>}
 
       {deleteContractIsError && (
         <Alert variant="danger">
@@ -87,6 +117,13 @@ export default function ContractDetail() {
                   <h4>Contract name: {contractData.contract.name}</h4>
                 </Col>
                 <Col>
+                  <Button
+                    variant="warning"
+                    onClick={handleGenerateFile}
+                    disabled={generateFileIsLoading}
+                  >
+                    {generateFileIsLoading ? "Generating..." : "Launch"}
+                  </Button>
                   <Button
                     variant="primary"
                     // onClick={handleGeneratePDF}
@@ -146,12 +183,7 @@ export default function ContractDetail() {
             </Card.Header>
             <Card.Body style={{ marginBottom: "5px", borderBottom: "1px lightgrey solid"}}>
               {contractData.parties.map(party => (
-                <ListGroup key={party.id} horizontal>
-                  <ListGroup.Item>{party.partyEmail}</ListGroup.Item>
-                  <ListGroup.Item>{party.role}</ListGroup.Item>
-                  <ListGroup.Item>{party.description}</ListGroup.Item>
-                  <Button variant="danger">Delete Party</Button>
-                </ListGroup>
+                <PartyListItem party={party} key={party.id} contract_id={contract_id}/>
               ))}
             </Card.Body>
 
@@ -219,8 +251,6 @@ export default function ContractDetail() {
           </Button>
         </Modal.Footer>
       </Modal>
-
-
 
 
     </>

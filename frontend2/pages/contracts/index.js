@@ -11,7 +11,7 @@ export default function Contracts() {
   const [key, setKey] = useState("draft")
 
   const access_token = useSelector(state => state.auth.access)
-  const email = useSelector(state => state.auth.user.userdata.email)
+  const email = useSelector(state => state.auth.user.userdata.email) ?? ""
 
   // pull draft contracts for this user
   const {
