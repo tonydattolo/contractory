@@ -20,6 +20,7 @@ eth-utils = "*"
 django-wkhtmltopdf = "*"
 django-pdfkit = "*"
 reportlab = "*"
+web3 = "*"
 
 [dev-packages]
 

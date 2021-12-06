@@ -22,3 +22,7 @@ ETH/USD Feed: https://etherscan.io/address/0xAc559F25B1619171CbC396a50854A3240b6
 Deploy contract using web3.py
 Official Docs: https://web3py.readthedocs.io/en/stable/contracts.html
 Example: https://web3py.readthedocs.io/en/stable/examples.html#deploying-new-contracts
+
+Ganache Local test blockchain:
+https://trufflesuite.com/docs/ganache/quickstart.html
+https://github.com/trufflesuite/ganache
