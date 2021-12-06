@@ -14,3 +14,11 @@ NBA API: https://github.com/swar/nba_api
 We can setup a chainlink oracle to do this automatically I think as well?
 How to use an oracle: https://www.youtube.com/watch?v=AtHp7me2Yks
 What's an oracle?: https://www.youtube.com/watch?v=ZJfkNzyO7-U
+Chainlink docs, getting price: https://docs.chain.link/docs/get-the-latest-price/
+Implementing Chainlink Price Oracle: https://www.youtube.com/watch?v=PSJarTvQvtE
+Chainlin ethereum price feeds: https://docs.chain.link/docs/ethereum-addresses/
+ETH/USD Feed: https://etherscan.io/address/0xAc559F25B1619171CbC396a50854A3240b6A4e99
+
+Deploy contract using web3.py
+Official Docs: https://web3py.readthedocs.io/en/stable/contracts.html
+Example: https://web3py.readthedocs.io/en/stable/examples.html#deploying-new-contracts
