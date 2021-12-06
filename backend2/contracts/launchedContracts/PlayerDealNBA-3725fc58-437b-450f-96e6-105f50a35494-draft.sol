@@ -31,7 +31,7 @@ contract PlayerDealNBA {
     }
 
     // placeholder contract info
-    // placeholder team info
+	string public senderEmail = "icerothstein@gmail.com";
     // placeholder player info
 
     function getLatestPrice() public view returns (int) {
