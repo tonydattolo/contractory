@@ -455,21 +455,43 @@ class GenerateContractFile(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         try:
-            with open(f'contracts/launchedContracts/{contract.id}-{contract.status}.sol', 'w') as f:
-                newContract = File(f)
-                newContract.write(f'pragma solidity ^0.5.0;\n\n')
-                newContract.write(f'contract name: {contract.name} \n \
-                                    description: {contract.description} \n \
-                                    id: {contract.id} \n \
-                                    ')
-                for party in parties:
-                    newContract.write(f'\n\n\nparty: {party.party} \n \
-                                        description: {party.description} \n \
-                                        name: {party.name} \n ')
-                for clause in clauses:
-                    newContract.write(f'\n\n\nclause: {clause.id} \n \
-                                        content: {clause.content} \n ')
-                newContract.close()
+            
+            templates = ['PlayerDealNBA',]
+            sender = contract.party_set.get(role="sender")
+            receiver = contract.party_set.get(role="receiver")
+            
+            # open PlayerDealNBA.sol file, print the file to console, read all the lines, and store them in a list
+            with open(f'contracts/smartContractTemplates/{templates[0]}.sol', 'r') as template:
+                # print(f'{template=}')
+                lines = template.readlines()
+                
+                with open(f'contracts/launchedContracts/{templates[0]}-{contract.id}-{contract.status}.sol', 'w') as f:
+                    newContract = File(f)
+                    for line in range(len(lines)):
+                        if line == 33:
+                            newContract.write(f'\tstring public senderEmail = "{sender.party.email}";\n')
+                            pass
+                        else:
+                            newContract.write(lines[line])
+                    
+                    newContract.close()
+                     
+            
+            # with open(f'contracts/launchedContracts/{contract.id}-{contract.status}.sol', 'w') as f:
+            #     newContract = File(f)
+            #     newContract.write(f'pragma solidity ^0.5.0;\n\n')
+            #     newContract.write(f'contract name: {contract.name} \n \
+            #                         description: {contract.description} \n \
+            #                         id: {contract.id} \n \
+            #                         ')
+            #     for party in parties:
+            #         newContract.write(f'\n\n\nparty: {party.party} \n \
+            #                             description: {party.description} \n \
+            #                             name: {party.name} \n ')
+            #     for clause in clauses:
+            #         newContract.write(f'\n\n\nclause: {clause.id} \n \
+            #                             content: {clause.content} \n ')
+            #     newContract.close()
 
             return Response(
                 {"message": "Contract file successfully generated"},
