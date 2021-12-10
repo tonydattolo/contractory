@@ -5,12 +5,45 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract PlayerDealNBA {
     AggregatorV3Interface internal priceFeed;
+
+    Team team;
+    Player player;
+    DealTerms terms;
+    PerformanceBonus[] bonuses;
     
+    function PlayerDealNBA(AggregatorV3Interface _priceFeed) public {
+        priceFeed = _priceFeed;
+        team = new Team();
+        player = new Player();
+        terms = new DealTerms();
+        bonuses = new PerformanceBonus[];
+    }
+
+    // constructor only called when contract is created
     constructor () {
         priceFeed = AggregatorV3Interface(0xAc559F25B1619171CbC396a50854A3240b6A4e99);
     }
 
+    // function getPrice(string memory _playerName) public view returns (uint) {
+    //     return priceFeed.getAggregatedValue(_playerName);
+    // }
+
+    mapping (bool => uint) performanceBonus;
+    event WeeklySalaryPaid(address indexed player, uint256 salary);
+    event PerformanceBonusPaid(address indexed player, uint256 bonus);
+
     enum DealStatus { live, completed, paused, cancelled }
+
+    // event allows you to publicize something to users outside the contract
+
+    error InsufficientFunds(uint requested, uint available);
+
+    address oracle = "";
+
+    modifier onlyOracle {
+        require(msg.sender == oracle);
+        _; // means rest of the code comes after the modifier
+    }
 
     struct Team {
         address payable public teamAddress; 
@@ -26,8 +59,27 @@ contract PlayerDealNBA {
     struct DealTerms {
         int weeks public contractLengthInWeeks;
         int amount;
+    }
 
-        
+    struct PerformanceBonus {
+        string public description;
+        bool public isTriggered;
+        uint256 public bonusAmount;
+    }
+    // grab performance bonus clauses from backend, and map to PerformanceBonus Objects
+    // then tie to the player
+
+    function getPerformanceBonus(uint256 _playerId) public view returns (uint256) {
+        return bonuses[_playerId].bonusAmount;
+    }
+
+    function sendPerformanceBonus(uint256 _playerId) external onlyOracle {
+        // send ether to player address
+        require(msg.sender == oracle, "Only oracle can send performance bonuses");
+        if (bonuses[_playerId].bonusAmount > balanceOf(team.teamAddress)) {
+            throw InsufficientFunds(bonuses[_playerId].bonusAmount, balanceOf(team.teamAddress));
+        }
+        emit PerformanceBonusPaid(player.playerAddress, bonuses[_playerId].bonusAmount);
     }
 
     // placeholder contract info
