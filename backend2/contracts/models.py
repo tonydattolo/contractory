@@ -1,3 +1,5 @@
+from math import radians
+import random
 from django.db import models
 from uuid import uuid4
 from django.db.models.deletion import CASCADE
@@ -12,7 +14,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 USER = get_user_model()
 
-
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 
 class SmartContract(models.Model):
     """
@@ -75,7 +78,8 @@ class SmartContract(models.Model):
         """
         self.remove_clause.delete(clause)
 
-    
+
+
 
 class Party(models.Model):
     """
@@ -109,8 +113,8 @@ class Clause(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    # field that holds a randomly assigned default color for the clause
-    # color = models.CharField(max_length=7, default="#000000")
+    color = models.CharField(max_length=7, blank=True)
+    
 
     # amount = models.IntegerField(default=0)
     # sender = models.ForeignKey(Party, on_delete=CASCADE, related_name='sender')
@@ -152,3 +156,18 @@ class Clause(models.Model):
     # payment_tx_block_hash = models.CharField(max_length=100, blank=True)
     # payment_tx_timestamp = models.DateTimeField(blank=True, null=True)
     # payment_tx_confirmations = models.IntegerField(default=0)
+
+@receiver(post_save, sender=Clause)
+def setClauseColor(sender, instance, created, *args, **kwargs):
+    if created:
+        # set color to random hexadecimal color, checking first if it unqiue amongst already existing clauses
+        while True:
+            # color = '#%06x' % random.randint(0, 0xFFFFFF)
+            color = '#' + ''.join([random.choice('0123456789ABCDEF') for x in range(6)])
+            if not Clause.objects.filter(color=color).exists():
+                break
+        instance.color = color
+
+        # instance.color = '#' + ''.join([random.choice('0123456789ABCDEF') for x in range(6)])
+        instance.save()
+# post_save.connect(setClauseColor, sender=Clause)
