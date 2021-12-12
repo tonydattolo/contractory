@@ -1,0 +1,1 @@
+print(open('../smartContractTemplates/Greeter.sol').read())
