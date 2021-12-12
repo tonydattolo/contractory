@@ -28,7 +28,7 @@ export default function ClauseListItem({ clause, contract_id }) {
 
   return (
     <>
-      <ListGroup key={clause.id} style={{ border: "1px lightgrey solid", marginBottom: "5px" }}>
+      <ListGroup key={clause.id} style={{ border: `2px ${clause.color} solid`, marginBottom: "5px" }}>
         <Row>
           <Col lg={8}>
             <p>Clause: {clause.id}</p>
