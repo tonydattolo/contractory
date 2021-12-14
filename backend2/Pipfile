@@ -21,6 +21,8 @@ django-wkhtmltopdf = "*"
 django-pdfkit = "*"
 reportlab = "*"
 web3 = "*"
+py-solc-x = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

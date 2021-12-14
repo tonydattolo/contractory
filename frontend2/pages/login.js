@@ -1,4 +1,4 @@
-import { Button, Spinner } from "react-bootstrap";
+import { Button, Spinner, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -142,6 +142,8 @@ export default function Login() {
       <div>
         <h3>Login Page</h3>
       </div>
+
+      {loginIsError && (<Alert variant="danger">{loginError.data.detail}</Alert>)}
 
       <Form>
         <Form.Group className="mb-3" controlId="formBasicEmail">

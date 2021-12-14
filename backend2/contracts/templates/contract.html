@@ -103,10 +103,11 @@
             </thead>
             <tbody>
                 {% for clause in clauses %}
-                    <tr>
+                    <tr style="border: 2px solid {{ clause.color }}; margin-bottom: 1px;">
                         <td>{{ clause.id }}</td>
                         <td>{{ clause.content }}</td>
                         <td>{{ clause.created_at|date:'d.m.Y' }}</td>
+                        <td>{{ clause.color }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

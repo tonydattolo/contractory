@@ -4,9 +4,11 @@ import { useGetDraftContractsByUserQuery } from "slices/contractsAPI"
 import { useSelector } from "react-redux"
 
 import Contract from "@/components/Contracts/Contract"
-
+import { useRouter } from "next/router"
 
 export default function Contracts() {
+
+  const router = useRouter()
 
   const [key, setKey] = useState("draft")
 
@@ -31,6 +33,12 @@ export default function Contracts() {
   //     console.log(error)
   //   }
   // }
+
+  useEffect(() => {
+    if (!access_token) {
+      router.push("/login",undefined,{ shallow: true })
+    }
+  }, [access_token])
 
   useEffect(() => {
     // console.log(`key: ${key}`)
