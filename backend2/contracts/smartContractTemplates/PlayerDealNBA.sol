@@ -6,22 +6,23 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 contract PlayerDealNBA {
     AggregatorV3Interface internal priceFeed;
 
-    Team team;
-    Player player;
-    DealTerms terms;
-    PerformanceBonus[] bonuses;
+    Team public team;
+    Player public player;
+    DealTerms public terms;
+    PerformanceBonus[] public bonuses;
     
     function PlayerDealNBA(AggregatorV3Interface _priceFeed) public {
         priceFeed = _priceFeed;
-        team = new Team();
-        player = new Player();
-        terms = new DealTerms();
-        bonuses = new PerformanceBonus[];
     }
 
     // constructor only called when contract is created
     constructor () {
+        // set the price feed for ethereum. maybe coinbase has a free one?
         priceFeed = AggregatorV3Interface(0xAc559F25B1619171CbC396a50854A3240b6A4e99);
+        team = new Team();
+        player = new Player();
+        terms = new DealTerms();
+        bonuses = new PerformanceBonus[];
     }
 
     // function getPrice(string memory _playerName) public view returns (uint) {
