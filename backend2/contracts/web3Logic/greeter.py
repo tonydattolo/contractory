@@ -56,8 +56,12 @@ abi = compiled_sol["contracts"]["Greeter.sol"]["Greeter"]["abi"]
 
 w3 = Web3(Web3.HTTPProvider(GANACHE_URL))
 
-test_address = "0xf98c6f6b64CF53f5244f3702dbC122798ECcf3B6"
-test_address_private_key = "0x981a5ced5561ff1c2c8798092aa8be6b09110fa551367fcb29fda142a4d3220c"
+# laptop
+# test_address = "0xf98c6f6b64CF53f5244f3702dbC122798ECcf3B6"
+# test_address_private_key = "0x981a5ced5561ff1c2c8798092aa8be6b09110fa551367fcb29fda142a4d3220c"
+# desktop
+test_address ='0x407f715EE3C2b860cb135dffF62C2C748d68c23B'
+test_address_private_key = '9031c9bb3bab077d27da212ac6967f83b9fb5a390273ba9b1988d9497177b277'
 # test_address_private_key_fromENV = os.getenv("TEST_ADDRESS_PRIVATE_KEY")
 
 w3.eth.defaultAccount = w3.eth.accounts[0]
