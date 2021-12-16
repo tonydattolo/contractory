@@ -23,6 +23,7 @@ reportlab = "*"
 web3 = "*"
 py-solc-x = "*"
 python-dotenv = "*"
+eth-brownie = "*"
 
 [dev-packages]
 
