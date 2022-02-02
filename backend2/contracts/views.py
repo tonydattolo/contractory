@@ -447,6 +447,7 @@ class GenerateContractFile(APIView):
             #     return Response({"message": "Cannot generate a contract file for a completed smart contract"}, status=status.HTTP_400_BAD_REQUEST)
             
             parties = contract.party_set.all()
+            print(f'{parties=}')
             clauses = contract.clause_set.all()
         except Exception as e:
             print(f'{e=}')
@@ -458,7 +459,9 @@ class GenerateContractFile(APIView):
             
             templates = ['PlayerDealNBA',]
             sender = contract.party_set.get(role="sender")
-            receiver = contract.party_set.get(role="receiver")
+            # receiver = contract.party_set.get(role="receiver")
+            # receiver = contract.party_set.get(role="lawyer")
+            receiver = contract.party_set.get(role="viewer")
             
             # open PlayerDealNBA.sol file, print the file to console, read all the lines, and store them in a list
             with open(f'contracts/smartContractTemplates/{templates[0]}.sol', 'r') as template:

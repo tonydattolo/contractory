@@ -88,7 +88,7 @@ export default function ConnectButton() {
       signerAddress: ${signerAddress}`)
     }
 
-    await confirmSignature({ account, nonce, signature, access_token })
+    await confirmSignature({ account, nonce, signature, access_token }) // calls to confirm signature at endpoint: /api/confirm_signature/
     
   }
   
