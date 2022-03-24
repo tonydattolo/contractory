@@ -4,21 +4,27 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Django = "==3.2.7"
+django = "==3.2.7"
 djangorestframework = "==3.12.4"
-djoser = "==2.1.0"
 djangorestframework-simplejwt = "==4.8.0"
-PyJWT = "==2.1.0"
+psycopg2 = "*"
 django-cors-headers = "==3.8.0"
+djoser = "==2.1.0"
+pyjwt = "==2.1.0"
 social-auth-core = "==4.1.0"
 social-auth-app-django = "==4.0.0"
+autopep8 = "*"
 drf-yasg = "*"
-django-pdfkit = "==0.3.1"
-django-wkhtmltopdf = "*"
-python-dotenv = "*"
 ethereum = "==2.3.2"
+django-wkhtmltopdf = "*"
+django-pdfkit = "*"
+reportlab = "*"
+web3 = "*"
+py-solc-x = "*"
+python-dotenv = "*"
+eth-brownie = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"

@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 # reportlab attemp
 from io import BytesIO
 from django.http import FileResponse
-from reportlab.pdfgen import canvas
+# from reportlab.pdfgen import canvas
 
 from django.core.files import File
 

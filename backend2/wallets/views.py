@@ -19,7 +19,8 @@ class AddWalletView(APIView):
     authentication_classes = [JWTAuthentication, ]
 
     def post(self, request, address):
-
+        print(f'{request.user=}')
+        print(f'{address=}')
         try:
             if not address:
                 return Response(

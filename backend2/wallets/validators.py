@@ -1,10 +1,13 @@
 from django.core.exceptions import ValidationError
-from eth_utils import is_hex_address
+# from eth_utils import is_hex_address
+# from ethereum.utils import 
 import sha3
 from ethereum.utils import ecrecover_to_pub
 
+from wallets.utils import isEthereumHexAddress
+
 def ethereumAddressValidator(address):
-    if not is_hex_address(address):
+    if not isEthereumHexAddress(address):
         raise ValidationError("Invalid Ethereum address")
     return True
 
