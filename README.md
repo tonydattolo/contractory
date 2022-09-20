@@ -1,2 +1,2 @@
-# web3Social
-web3 social media concept
+# contractory
+web3 no code ricardian smart contract concept
